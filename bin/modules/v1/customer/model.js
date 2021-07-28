@@ -87,45 +87,13 @@ const findAll = async (payload) => {
     }
     let query = {
       where: {
-        role: {
-          [Op.not]: "superadmin",
-        },
+        merchant_id: payload.merchant_id,
       },
-      attributes: [
-        "id",
-        "email",
-        "fullname",
-        "role",
-        "merchant_id",
-        "createdAt",
-        "updatedAt",
-      ],
       offset: (payload.page - 1) * payload.limit,
       limit: payload.limit,
       order: order,
-      include: ["merchant"],
       raw: true,
-      nest: true,
     };
-    if (payload.search) {
-      query.where = {
-        [Op.or]: [
-          {
-            email: {
-              [Op.like]: `%${payload.search}%`,
-            },
-          },
-          {
-            fullname: {
-              [Op.like]: `%${payload.search}%`,
-            },
-          },
-        ],
-      };
-    }
-    if (payload.merchant_id) {
-      query.where.merchant_id = payload.merchant_id;
-    }
     const result = await Customer.findAndCountAll(query);
     return {
       err: null,

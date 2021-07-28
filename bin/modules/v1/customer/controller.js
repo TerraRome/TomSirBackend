@@ -1,41 +1,34 @@
-const { v4: uuidv4 } = require('uuid');
-const model = require('./model');
-const common = require('../../../helpers/common');
-const config = require('../../../configs/config');
+const { v4: uuidv4 } = require("uuid");
+const model = require("./model");
+const common = require("../../../helpers/common");
+const config = require("../../../configs/config");
 
-const getUsers = async (payload) => {
-  const rsUsers = await model.findAll(payload);
-  if(rsUsers.err) {
-    return rsUsers;
+const getCustomers = async (payload) => {
+  const result = await model.findAll(payload);
+  if (result.err) {
+    return result;
   }
 
-  rsUsers.data.rows = rsUsers.data.rows.map(d => {
-    return {
-      ...d,
-      merchant: {
-        ...d.merchant,
-        image: d.merchant.image ? config.baseUrl + d.merchant.image : d.merchant.image
-      }
-    }
-  })
-
-  rsUsers.data = {
+  result.data = {
     current_page: payload.page,
-    page_size: rsUsers.data.rows.length < payload.limit ? rsUsers.data.rows.length : payload.limit,
-    total_page: Math.ceil(rsUsers.data.count / payload.limit),
-    ...rsUsers.data
-  }
+    page_size:
+      result.data.rows.length < payload.limit
+        ? result.data.rows.length
+        : payload.limit,
+    total_page: Math.ceil(result.data.count / payload.limit),
+    ...result.data,
+  };
 
   return {
     err: null,
-    data: rsUsers.data
-  }
-}
+    data: result.data,
+  };
+};
 
 const create = async (payload) => {
-  const result = await model.findByPhone(payload)
-  if(result.err) {
-    if(result.err.code != 404) {
+  const result = await model.findByPhone(payload);
+  if (result.err) {
+    if (result.err.code != 404) {
       return result;
     }
 
@@ -44,39 +37,40 @@ const create = async (payload) => {
       name: payload.name,
       email: payload.email,
       phone_number: payload.phone_number,
+      merchant_id: payload.merchant_id,
     };
 
     const insert = await model.insertOne(userObj);
-    if(insert.err) {
+    if (insert.err) {
       return insert;
     }
     return insert;
   }
 
   return {
-    err: { message: 'phone number is already taken!', code: 409 },
-    data: null
-  }
-}
+    err: { message: "phone number is already taken!", code: 409 },
+    data: null,
+  };
+};
 
 const update = async (payload) => {
-  const checkUser = await model.findOne(payload)
-  if(checkUser.err) {
+  const checkUser = await model.findOne(payload);
+  if (checkUser.err) {
     return checkUser;
   }
 
-  if(checkUser.data.email != payload.email) {
-    const result = await model.findByEmail(payload)
-    if(result.err) {
-      if(result.err.code != 404) {
+  if (checkUser.data.email != payload.email) {
+    const result = await model.findByEmail(payload);
+    if (result.err) {
+      if (result.err.code != 404) {
         return result;
       }
     }
-    if(!result.err) {
+    if (!result.err) {
       return {
-        err: { message: 'email is already taken!', code: 409 },
-        data: null
-      }
+        err: { message: "email is already taken!", code: 409 },
+        data: null,
+      };
     }
   }
 
@@ -84,26 +78,26 @@ const update = async (payload) => {
     email: payload.email,
     fullname: payload.fullname,
     role: payload.role,
-    merchant_id: payload.merchant_id
+    merchant_id: payload.merchant_id,
   };
 
-  if(payload.password) {
+  if (payload.password) {
     userObj.password = await common.generateHash(payload.password);
   }
 
   const update = await model.updateOne(userObj, payload);
-  if(update.err) {
+  if (update.err) {
     return update;
   }
-  
+
   return {
     err: null,
-    data: update.data
-  }
-}
+    data: update.data,
+  };
+};
 
 module.exports = {
-  getUsers,
+  getCustomers,
   create,
-  update
-}
+  update,
+};

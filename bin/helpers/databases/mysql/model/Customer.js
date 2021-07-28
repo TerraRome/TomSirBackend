@@ -13,7 +13,7 @@ Customer.init(
     },
     name: {
       type: Sequelize.STRING(255),
-      allowNull: false
+      allowNull: false,
     },
     email: {
       type: Sequelize.STRING(255),
@@ -21,6 +21,10 @@ Customer.init(
     },
     phone_number: {
       type: Sequelize.STRING(15),
+      allowNull: false,
+    },
+    merchant_id: {
+      type: Sequelize.STRING(255),
       allowNull: false,
     },
   },

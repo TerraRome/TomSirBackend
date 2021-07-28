@@ -7,6 +7,7 @@ const Ingredient = require('./Ingredient');
 const AddonCategory = require('./AddonCategory');
 const Product = require('./Product');
 const Transaction = require('./Transaction');
+const Customer = require('./Customer');
 
 class Merchant extends Model {}
 Merchant.init(
@@ -82,5 +83,12 @@ Merchant.hasMany(Transaction, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE'
 });
+
+Merchant.hasMany(Customer, { 
+    as: 'customer',
+    foreignKey: 'merchant_id',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+  });
 
 module.exports = Merchant;

@@ -1,18 +1,21 @@
 const joi = require('joi');
 
-const getUsers = joi.object({
-  search: joi.string().optional().allow('').default(''),
+const getCustomers = joi.object({
+  //search: joi.string().optional().allow('').default(''),
   limit: joi.number().optional().default(999999999),
   page: joi.number().optional().default(1),
-  sortBy: joi.string().valid('name','email','createdAt').optional().default('createdAt'),
+  sortBy: joi.string().valid('name','createdAt').optional().default('createdAt'),
   order: joi.string().valid('ASC','DESC').optional().default('ASC'),
-  name: joi.string().optional().allow('')
+  merchant_id: joi.string().required()
 });
 
 const create = joi.object({
   name: joi.string().required(),
   email: joi.string().optional(),
-  phone_number: joi.string().required()
+  phone_number: joi.string().required(),
+  merchant_id: joi.string().required().messages({
+    'any.required': `Akun anda tidak memiliki merchant`
+  }),
 });
 
 const update = joi.object({
@@ -23,7 +26,7 @@ const update = joi.object({
 });
 
 module.exports = {
-  getUsers,
+  getCustomers,
   create,
   update
 };

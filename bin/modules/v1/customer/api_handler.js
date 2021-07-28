@@ -8,26 +8,26 @@ router.get('/', jwtAuth.verifyToken, async(req, res) => {
   const payload = {
     ...req.query
   };
-  const validatePayload = await common.isValidPayload(payload, reqModel.getUsers);
+  const validatePayload = await common.isValidPayload(payload, reqModel.getCustomers);
   const postRequest = async (result) => {
     if(result.err) {
       return result;
     }
-    return controller.getUsers(result.data);
+    return controller.getCustomers(result.data);
   };
   const sendResponse = async (result) => {
     if(result.err) {
       return res.status(result.err.code || 500).json({
         success: false,
         data: '',
-        message: result.err.message || 'Get users fail',
+        message: result.err.message || 'Get Customers fail',
         code: result.err.code || 500
       }); 
     }
     return res.status(200).json({
       success: true,
       data: result.data,
-      message: 'Get users success',
+      message: 'Get Customers success',
       code: 200
     });
   };
@@ -65,7 +65,7 @@ router.put('/update-profile', jwtAuth.verifyToken, async(req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
-router.post('/', async(req, res) => {
+router.post('/', jwtAuth.verifyToken, async(req, res) => {
   const payload = {
     ...req.body
   };
