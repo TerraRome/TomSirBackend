@@ -4,7 +4,7 @@ const reqModel = require('./request_model');
 const common = require('../../../helpers/common');
 const jwtAuth = require('../../../helpers/authentication');
 
-router.get('/', jwtAuth.verifyToken, async(req, res) => {
+router.get('/', async(req, res) => {
   const payload = {
     ...req.query,
     merchant_id: req.decodedToken.merchant ? req.decodedToken.merchant.id || undefined : undefined
@@ -77,6 +77,37 @@ router.put('/:id', jwtAuth.verifyToken, async(req, res) => {
       return result;
     }
     return controller.update(result.data);
+  };
+  const sendResponse = async (result) => {
+    if(result.err) {
+      return res.status(result.err.code || 500).json({
+        success: false,
+        data: result.err.data || '',
+        message: result.err.message || 'Update order fail',
+        code: result.err.code || 500
+      }); 
+    }
+    return res.status(200).json({
+      success: true,
+      data: result.data,
+      message: 'Update order success',
+      code: 200
+    });
+  };
+  sendResponse(await postRequest(validatePayload));
+});
+
+router.put('/refund/:id', jwtAuth.verifyToken, async(req, res) => {
+  const payload = {
+    id: req.params.id,
+    ...req.body
+  };
+  const validatePayload = await common.isValidPayload(payload, reqModel.update);
+  const postRequest = async (result) => {
+    if(result.err) {
+      return result;
+    }
+    return controller.refund(result.data);
   };
   const sendResponse = async (result) => {
     if(result.err) {

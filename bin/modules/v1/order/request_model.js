@@ -10,7 +10,7 @@ const getOrders = joi.object({
   page: joi.number().optional().default(1),
   sortBy: joi.string().valid('type','code','createdAt').optional().default('createdAt'),
   order: joi.string().valid('ASC','DESC').optional().default('ASC'),
-  status: joi.string().valid('paid','hold').optional().allow('').default(''),
+  status: joi.string().valid('paid','hold','refund').optional().allow('').default(''),
   type: joi.string().valid('dine_in','take_away').optional().allow('').default(''),
   start_date: joi.date().optional().allow('').default(''),
   end_date: joi.date().optional().allow('').default(''),
@@ -59,7 +59,7 @@ const update = joi.object({
   payment_type: joi.string().valid('cash').required(),
   total_pay: joi.number().required(),
   payment_return: joi.number().optional(),
-  status: joi.string().valid('paid','hold').required()
+  status: joi.string().valid('paid','hold','refund').required()
 });
 
 const addProduct = joi.object({

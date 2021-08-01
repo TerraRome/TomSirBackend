@@ -258,6 +258,30 @@ const updateStock = async (payload) => {
     }
 }
 
+const refundStock = async (payload) => {
+  const ctx = 'updateStock';
+    try {
+      let ids = [];
+      let caseSql = '';
+      for (let i = 0; i < payload.length; i++) {
+        caseSql += `WHEN '${payload[i].id}' THEN stock - ${payload[i].qty} `;
+        ids.push(`'${payload[i].id}'`);
+      }
+      let querySql = `UPDATE tbl_product SET stock = (CASE id ${caseSql}END) WHERE id IN (${ids})`;
+      await connSequelize.query(querySql);
+      return {
+        err: null,
+        data: 'success'
+      }
+    } catch (error) {
+      console.log(ctx, error, 'Catch Error');
+      return {
+        err: { message: 'Internal Server Error!', code: 500 },
+        data: null
+      }
+    }
+}
+
 const deleteOne = async (payload) => {
   const ctx = 'deleteOne';
     try {
@@ -288,6 +312,7 @@ module.exports = {
   insertIngredient,
   findMultpileWithIngredient,
   updateStock,
+  refundStock,
   deleteOne,
   deleteAddon,
   deleteIngredient
