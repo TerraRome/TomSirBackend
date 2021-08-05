@@ -4,16 +4,16 @@ const reqModel = require('./request_model');
 const common = require('../../../helpers/common');
 const jwtAuth = require('../../../helpers/authentication');
 
-router.get('/', async(req, res) => {
+router.get('/', jwtAuth.verifyToken, jwtAuth.isAdmin, async(req, res) => {
   const payload = {
     ...req.query
   };
-  const validatePayload = await common.isValidPayload(payload, reqModel.getKas);
+  const validatePayload = await common.isValidPayload(payload, reqModel.getAllKas);
   const postRequest = async (result) => {
     if(result.err) {
       return result;
     }
-    return controller.getKas(result.data);
+    return controller.getAllKas(result.data);
   };
   const sendResponse = async (result) => {
     if(result.err) {
@@ -34,9 +34,10 @@ router.get('/', async(req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
-router.post('/', async(req, res) => {
+router.post('/', jwtAuth.verifyToken, jwtAuth.isAdmin, async(req, res) => {
   const payload = {
     ...req.body,
+    merchant_id: req.decodedToken.merchant ? req.decodedToken.merchant.id || undefined : undefined,
   };
   const validatePayload = await common.isValidPayload(payload, reqModel.create);
   const postRequest = async (result) => {

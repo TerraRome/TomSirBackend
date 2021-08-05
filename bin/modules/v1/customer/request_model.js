@@ -22,7 +22,8 @@ const update = joi.object({
   id: joi.string().required(),
   name: joi.string().required(),
   email: joi.string().optional(),
-  phone_number: joi.string().required()
+  phone_number: joi.string().required(),
+  merchant_id: joi.string().required(),
 });
 
 module.exports = {

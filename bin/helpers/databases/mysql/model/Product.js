@@ -24,9 +24,25 @@ Product.init(
       type: Sequelize.INTEGER(11),
       allowNull: false
     },
+    modal: {
+      type: Sequelize.INTEGER(11),
+      allowNull: true
+    },
     price: {
       type: Sequelize.INTEGER(11),
       allowNull: false
+    },
+    sku: {
+      type: Sequelize.STRING(255),
+      allowNull: false
+    },
+    barcode: {
+      type: Sequelize.STRING(255),
+      allowNull: false
+    },
+    sell_type: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     },
     disc: {
       type: Sequelize.INTEGER(11),

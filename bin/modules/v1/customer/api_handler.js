@@ -34,31 +34,31 @@ router.get('/', jwtAuth.verifyToken, async(req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
-router.put('/update-profile', jwtAuth.verifyToken, async(req, res) => {
+router.put('/:id', jwtAuth.verifyToken, async(req, res) => {
   const payload = {
-    email: req.decodedToken.email,
+    id: req.params.id,
     ...req.body
   };
-  const validatePayload = await common.isValidPayload(payload, reqModel.updateProfile);
+  const validatePayload = await common.isValidPayload(payload, reqModel.update);
   const postRequest = async (result) => {
     if(result.err) {
       return result;
     }
-    return controller.updateProfile(result.data);
+    return controller.update(result.data);
   };
   const sendResponse = async (result) => {
     if(result.err) {
       return res.status(result.err.code || 500).json({
         success: false,
         data: '',
-        message: result.err.message || 'Update profile fail',
+        message: result.err.message || 'Update Customer fail',
         code: result.err.code || 500
       }); 
     }
     return res.status(200).json({
       success: true,
       data: result.data,
-      message: 'Update profile success',
+      message: 'Update Customer success',
       code: 200
     });
   };

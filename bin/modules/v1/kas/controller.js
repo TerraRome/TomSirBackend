@@ -1,10 +1,17 @@
 const { v4: uuidv4 } = require('uuid');
 const model = require('./model');
 
-const getRegistration = async (payload) => {
-  const result = await model.findOne(payload)
+const getAllKas = async (payload) => {
+  const result = await model.findAll(payload);
   if(result.err) {
     return result;
+  }
+
+  result.data = {
+    current_page: payload.page,
+    page_size: result.data.rows.length < payload.limit ? result.data.rows.length : payload.limit,
+    total_page: Math.ceil(result.data.count / payload.limit),
+    ...result.data
   }
 
   return {
@@ -19,7 +26,8 @@ const create = async (payload) => {
     tanggal: payload.tanggal,
     type: payload.type,
     jumlah: payload.jumlah,
-    deskripsi: payload.deskripsi
+    deskripsi: payload.deskripsi,
+    merchant_id: payload.merchant_id
   };
 
   const insert = await model.insertOne(insertObj);
@@ -34,6 +42,6 @@ const create = async (payload) => {
 }
 
 module.exports = {
-  getRegistration,
+  getAllKas,
   create
 }

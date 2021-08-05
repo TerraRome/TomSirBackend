@@ -26,6 +26,10 @@ Kas.init(
       type: Sequelize.STRING(255),
       allowNull: false
     },
+    merchant_id: {
+      type: Sequelize.STRING(255),
+      allowNull: false
+    },
   },
   {
     sequelize,
