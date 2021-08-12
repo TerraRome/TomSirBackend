@@ -1,5 +1,5 @@
 const validate = require('validate.js');
-const Kas = require('../../../helpers/databases/mysql/model/Kas');
+const TypeOrder = require('../../../helpers/databases/mysql/model/TypeOrder');
 const connSequelize = require('../../../helpers/databases/mysql/connection');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
@@ -7,16 +7,16 @@ const Op = sequelize.Op;
 const findOne = async (payload) => {
   const ctx = 'findOne';
     try {
-      const result = await Kas.findOne({
+      const result = await TypeOrder.findOne({
         where: {
-          tanggal: payload.tanggal
+          name: payload.name
         },
         raw: true
       });
       if(validate.isEmpty(result)) {
         console.log(ctx, result, 'isEmpty');
         return {
-          err: { message: 'Kas not found!', code: 404 },
+          err: { message: 'Type Order not found!', code: 404 },
           data: null
         }
       }
@@ -38,7 +38,7 @@ const findAll = async (payload) => {
     try {
       let order = [[payload.sortBy,payload.order]];
       if(payload.sortBy != 'createdAt') {
-        order = [[sequelize.fn('lower', sequelize.col(`tbl_kas.${payload.sortBy}`)),payload.order]];
+        order = [[sequelize.fn('lower', sequelize.col(`tbl_type_order.${payload.sortBy}`)),payload.order]];
       }
       let query = {
         where: {
@@ -62,7 +62,7 @@ const findAll = async (payload) => {
           }]
         };
       }
-      const result = await Kas.findAndCountAll(query);
+      const result = await TypeOrder.findAndCountAll(query);
       return {
         err: null,
         data: result
@@ -79,7 +79,7 @@ const findAll = async (payload) => {
 const insertOne = async (payload) => {
   const ctx = 'insertOne';
     try {
-      const result = await Kas.create(payload);
+      const result = await TypeOrder.create(payload);
       return {
         err: null,
         data: result
@@ -96,7 +96,7 @@ const insertOne = async (payload) => {
 const updateOne = async (value, payload) => {
   const ctx = 'updateOne';
     try {
-      await Kas.update(value, {
+      await TypeOrder.update(value, {
         where: {
           id: payload.id
         }

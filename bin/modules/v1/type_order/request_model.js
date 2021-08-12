@@ -1,23 +1,21 @@
 const joi = require('joi');
 
-const getKas = joi.object({
+const getTypeOrder = joi.object({
   id: joi.string().required()
 });
 
-const getAllKas = joi.object({
+const getTypeOrders = joi.object({
   search: joi.string().optional().allow('').default(''),
   limit: joi.number().optional().default(999999999),
   page: joi.number().optional().default(1),
-  sortBy: joi.string().valid('type','jumlah','deskripsi','createdAt').optional().default('name'),
+  sortBy: joi.string().valid('name','status','createdAt').optional().default('name'),
   order: joi.string().valid('ASC','DESC').optional().default('ASC'),
   merchant_id: joi.string().required()
 });
 
 const create = joi.object({
-  tanggal: joi.string().required(),
-  type: joi.string().required(),
-  jumlah: joi.number().optional(),
-  deskripsi: joi.string().optional(),
+  name: joi.string().required(),
+  status: joi.boolean().required(),
   merchant_id: joi.string().required().messages({
     'any.required': `Akun anda tidak memiliki merchant`
   }),
@@ -25,16 +23,14 @@ const create = joi.object({
 
 const update = joi.object({
   id: joi.string().required(),
-  tanggal: joi.string().required(),
-  type: joi.string().optional(),
-  jumlah: joi.number().required(),
-  deskripsi: joi.string().optional(),
+  name: joi.string().required(),
+  status: joi.boolean().optional(),
   merchant_id: joi.string().required(),
 });
 
 module.exports = {
-  getKas,
-  getAllKas,
+  getTypeOrder,
+  getTypeOrders,
   create,
   update
 };

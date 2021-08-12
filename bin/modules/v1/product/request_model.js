@@ -4,6 +4,10 @@ const getProduct = joi.object({
   id: joi.string().required()
 });
 
+const getBarcode = joi.object({
+  barcode: joi.string().required()
+});
+
 const getProducts = joi.object({
   search: joi.string().optional().allow('').default(''),
   limit: joi.number().optional().default(999999999),
@@ -18,11 +22,11 @@ const create = joi.object({
   name: joi.string().required(),
   description: joi.string().optional().allow(''),
   stock: joi.number().required(),
-  modal: joi.number().required(),
+  modal: joi.number().optional(),
   price: joi.number().required(),
-  sku: joi.string().required(),
-  barcode: joi.string().required(),
-  sell_type: joi.boolean().required(),
+  sku: joi.string().optional().allow(''),
+  barcode: joi.string().optional().allow(''),
+  sell_type: joi.boolean().optional().default(false),
   exp_date: joi.date().optional(),
   category_id: joi.string().required(),
   addon_categories: joi.array().optional(),
@@ -44,11 +48,11 @@ const update = joi.object({
   name: joi.string().required(),
   description: joi.string().optional().allow(''),
   stock: joi.number().required(),
-  modal: joi.number().required(),
+  modal: joi.number().optional(),
   price: joi.number().required(),
-  sku: joi.string().required(),
-  barcode: joi.string().required(),
-  sell_type: joi.boolean().required(),
+  sku: joi.string().optional().allow(''),
+  barcode: joi.string().optional().allow(''),
+  sell_type: joi.boolean().optional().default(false),
   disc: joi.number().required(),
   is_disc_percentage: joi.boolean().required(),
   exp_date: joi.date().optional(),
@@ -67,5 +71,6 @@ module.exports = {
   getProduct,
   getProducts,
   create,
-  update
+  update,
+  getBarcode
 };

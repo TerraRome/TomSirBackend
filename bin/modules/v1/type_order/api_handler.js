@@ -8,26 +8,26 @@ router.get('/', jwtAuth.verifyToken, jwtAuth.isAdmin, async(req, res) => {
   const payload = {
     ...req.query
   };
-  const validatePayload = await common.isValidPayload(payload, reqModel.getAllKas);
+  const validatePayload = await common.isValidPayload(payload, reqModel.getTypeOrders);
   const postRequest = async (result) => {
     if(result.err) {
       return result;
     }
-    return controller.getAllKas(result.data);
+    return controller.getTypeOrders(result.data);
   };
   const sendResponse = async (result) => {
     if(result.err) {
       return res.status(result.err.code || 500).json({
         success: false,
         data: '',
-        message: result.err.message || 'Get kas fail',
+        message: result.err.message || 'Get Type Order fail',
         code: result.err.code || 500
       }); 
     }
     return res.status(200).json({
       success: true,
       data: result.data,
-      message: 'Get kas success',
+      message: 'Get Type Order success',
       code: 200
     });
   };
@@ -51,14 +51,14 @@ router.post('/', jwtAuth.verifyToken, jwtAuth.isAdmin, async(req, res) => {
       return res.status(result.err.code || 500).json({
         success: false,
         data: '',
-        message: result.err.message || 'Create kas fail',
+        message: result.err.message || 'Create Type Order fail',
         code: result.err.code || 500
       }); 
     }
     return res.status(200).json({
       success: true,
       data: result.data,
-      message: 'Create kas success',
+      message: 'Create Type Order success',
       code: 200
     });
   };
@@ -82,14 +82,14 @@ router.put('/:id', jwtAuth.verifyToken, async(req, res) => {
       return res.status(result.err.code || 500).json({
         success: false,
         data: '',
-        message: result.err.message || 'Update Kas fail',
+        message: result.err.message || 'Update Type Order fail',
         code: result.err.code || 500
       }); 
     }
     return res.status(200).json({
       success: true,
       data: result.data,
-      message: 'Update Kas success',
+      message: 'Update Type Order success',
       code: 200
     });
   };

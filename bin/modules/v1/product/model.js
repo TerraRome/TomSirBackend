@@ -96,6 +96,44 @@ const findOne = async (payload) => {
     }
 }
 
+const findBarcode = async (payload) => {
+  const ctx = 'findBarcode';
+    try {
+      const result = await Product.findOne({
+        where: {
+          barcode: {
+            [Op.like]: `%${payload.barcode}%`
+          }
+        },
+        include: [{
+          association: 'category'
+        },{
+          association: 'ingredient'
+        },{
+          association: 'addon_category',
+          include: ['addon_menu']
+        }]
+      });
+      if(validate.isEmpty(result)) {
+        console.log(ctx, result, 'isEmpty');
+        return {
+          err: { message: 'Product not found!', code: 404 },
+          data: null
+        }
+      }
+      return {
+        err: null,
+        data: result
+      }
+    } catch (error) {
+      console.log(ctx, error, 'Catch Error');
+      return {
+        err: { message: 'Internal Server Error!', code: 500 },
+        data: null
+      }
+    }
+}
+
 const insertOne = async (payload) => {
   const ctx = 'insertOne';
     try {
@@ -315,5 +353,6 @@ module.exports = {
   refundStock,
   deleteOne,
   deleteAddon,
-  deleteIngredient
+  deleteIngredient,
+  findBarcode
 }

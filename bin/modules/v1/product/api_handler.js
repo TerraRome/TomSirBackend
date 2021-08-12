@@ -34,10 +34,42 @@ router.get('/', async(req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
+router.get('/scan', async(req, res) => {
+  const payload = {
+    ...req.query,
+  };
+  console.log('halo')
+  const validatePayload = await common.isValidPayload(payload, reqModel.getBarcode);
+  const postRequest = async (result) => {
+    if(result.err) {
+      return result;
+    }
+    return controller.getBarcodeProduct(result.data);
+  };
+  const sendResponse = async (result) => {
+    if(result.err) {
+      return res.status(result.err.code || 500).json({
+        success: false,
+        data: '',
+        message: result.err.message || 'Get barcode product fail',
+        code: result.err.code || 500
+      }); 
+    }
+    return res.status(200).json({
+      success: true,
+      data: result.data,
+      message: 'Get barcode product success',
+      code: 200
+    });
+  };
+  sendResponse(await postRequest(validatePayload));
+});
+
 router.get('/:id', async(req, res) => {
   const payload = {
     id: req.params.id,
   };
+  console.log('hai')
   const validatePayload = await common.isValidPayload(payload, reqModel.getProduct);
   const postRequest = async (result) => {
     if(result.err) {

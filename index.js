@@ -30,6 +30,8 @@ create = function() {
   server.set('port', config.port);
   server.set('hostname', config.hostname);
 
+  server.disable('etag');
+
   // Returns middleware that parses json
   server.use(timeout('30s'));
   server.use(morgan('dev'));

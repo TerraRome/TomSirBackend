@@ -11,7 +11,7 @@ const getOrders = joi.object({
   sortBy: joi.string().valid('type','code','createdAt').optional().default('createdAt'),
   order: joi.string().valid('ASC','DESC').optional().default('ASC'),
   status: joi.string().valid('paid','hold','refund').optional().allow('').default(''),
-  type: joi.string().valid('dine_in','take_away').optional().allow('').default(''),
+  type: joi.string().optional().allow('').default(''),
   start_date: joi.date().optional().allow('').default(''),
   end_date: joi.date().optional().allow('').default(''),
   merchant_id: joi.string().required().messages({
@@ -20,7 +20,7 @@ const getOrders = joi.object({
 });
 
 const create = joi.object({
-  type_order: joi.string().valid('dine_in','take_away').required(),
+  type_order: joi.string().required(),
   note_order: joi.string().optional().allow('').default(''),
   products: joi.array().items(joi.object({
     qty: joi.number().required(),
@@ -43,7 +43,7 @@ const create = joi.object({
 
 const update = joi.object({
   id: joi.string().required(),
-  type_order: joi.string().valid('dine_in','take_away').required(),
+  type_order: joi.string().required(),
   note_order: joi.string().optional().allow('').default(''),
   products: joi.array().items(joi.object({
     qty: joi.number().required(),

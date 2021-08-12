@@ -34,11 +34,11 @@ Product.init(
     },
     sku: {
       type: Sequelize.STRING(255),
-      allowNull: false
+      allowNull: true
     },
     barcode: {
       type: Sequelize.STRING(255),
-      allowNull: false
+      allowNull: true
     },
     sell_type: {
       type: Sequelize.BOOLEAN,

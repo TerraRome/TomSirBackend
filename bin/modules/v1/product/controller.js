@@ -18,6 +18,19 @@ const getProduct = async (payload) => {
   }
 }
 
+const getBarcodeProduct = async (payload) => {
+  const result = await model.findBarcode(payload)
+  if(result.err) {
+    return result;
+  }
+
+  result.data.dataValues.image = result.data.dataValues.image ? config.baseUrl + result.data.dataValues.image : result.data.dataValues.image;
+  return {
+    err: null,
+    data: result.data
+  }
+}
+
 const getProducts = async (payload) => {
   const result = await model.findAll(payload);
   if(result.err) {
@@ -223,5 +236,6 @@ module.exports = {
   getProducts,
   create,
   update,
-  deleteOne
+  deleteOne,
+  getBarcodeProduct
 }

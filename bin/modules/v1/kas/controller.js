@@ -41,7 +41,28 @@ const create = async (payload) => {
   }
 }
 
+const update = async (payload) => {
+  const userObj = {
+    tanggal: payload.tanggal,
+    type: payload.type,
+    jumlah: payload.jumlah,
+    deskripsi: payload.deskripsi,
+    merchant_id: payload.merchant_id,
+  };
+
+  const update = await model.updateOne(userObj, payload);
+  if (update.err) {
+    return update;
+  }
+
+  return {
+    err: null,
+    data: update.data,
+  };
+};
+
 module.exports = {
   getAllKas,
-  create
+  create,
+  update
 }
