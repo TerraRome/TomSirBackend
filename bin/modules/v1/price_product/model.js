@@ -1,5 +1,5 @@
 const validate = require('validate.js');
-const Kas = require('../../../helpers/databases/mysql/model/Kas');
+const PriceProduct = require('../../../helpers/databases/mysql/model/PriceProduct');
 const connSequelize = require('../../../helpers/databases/mysql/connection');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
@@ -7,44 +7,30 @@ const Op = sequelize.Op;
 const findOne = async (payload) => {
   const ctx = 'findOne';
     try {
-      const result = await Kas.findOne({
-        where: {
-          tanggal: payload.tanggal
-        },
-        raw: true
-      });
+      let query = {}
+      if(payload.id) {
+        query.where = {
+          [Op.or]: [{
+            id: {
+              [Op.like]: `%${payload.id}%`
+            }
+          }]
+        };
+      }
+      if(payload.product_id) {
+        query.where = {
+          [Op.or]: [{
+            product_id: {
+              [Op.like]: `%${payload.product_id}%`
+            }
+          }]
+        };
+      }
+      const result = await PriceProduct.findOne(query);
       if(validate.isEmpty(result)) {
         console.log(ctx, result, 'isEmpty');
         return {
-          err: { message: 'Kas not found!', code: 404 },
-          data: null
-        }
-      }
-      return {
-        err: null,
-        data: result
-      }
-    } catch (error) {
-      console.log(ctx, error, 'Catch Error');
-      return {
-        err: { message: 'Internal Server Error!', code: 500 },
-        data: null
-      }
-    }
-}
-
-const findOneId = async (payload) => {
-  const ctx = 'findOne';
-    try {
-      const result = await Kas.findOne({
-        where: {
-          id: payload.id
-        }
-      });
-      if(validate.isEmpty(result)) {
-        console.log(ctx, result, 'isEmpty');
-        return {
-          err: { message: 'Kas not found!', code: 404 },
+          err: { message: 'Type Order not found!', code: 404 },
           data: null
         }
       }
@@ -64,33 +50,12 @@ const findOneId = async (payload) => {
 const findAll = async (payload) => {
   const ctx = 'findAll';
     try {
-      let order = [[payload.sortBy,payload.order]];
-      if(payload.sortBy != 'createdAt') {
-        order = [[sequelize.fn('lower', sequelize.col(`tbl_kas.${payload.sortBy}`)),payload.order]];
-      }
       let query = {
         where: {
-          merchant_id: payload.merchant_id
+          product_id: payload.product_id
         },
-        offset: (payload.page - 1) * payload.limit,
-        limit: payload.limit,
-        order: order,
-        distinct: true
       }
-      if(payload.search) {
-        query.where = {
-          [Op.or]: [{
-            deskripsi: {
-              [Op.like]: `%${payload.search}%`
-            }
-          }, {
-            type: {
-              [Op.like]: `%${payload.search}%`
-            }
-          }]
-        };
-      }
-      const result = await Kas.findAndCountAll(query);
+      const result = await PriceProduct.findAll(query);
       return {
         err: null,
         data: result
@@ -107,7 +72,7 @@ const findAll = async (payload) => {
 const insertOne = async (payload) => {
   const ctx = 'insertOne';
     try {
-      const result = await Kas.create(payload);
+      const result = await PriceProduct.create(payload);
       return {
         err: null,
         data: result
@@ -124,7 +89,7 @@ const insertOne = async (payload) => {
 const updateOne = async (value, payload) => {
   const ctx = 'updateOne';
     try {
-      await Kas.update(value, {
+      await PriceProduct.update(value, {
         where: {
           id: payload.id
         }
@@ -145,7 +110,7 @@ const updateOne = async (value, payload) => {
 const deleteOne = async (payload) => {
   const ctx = 'deleteOne';
     try {
-      await Kas.destroy({
+      await PriceProduct.destroy({
         where: {
           id: payload.id
         }
@@ -165,7 +130,6 @@ const deleteOne = async (payload) => {
 
 module.exports = {
   findOne,
-  findOneId,
   findAll,
   insertOne,
   updateOne,

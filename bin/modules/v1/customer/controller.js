@@ -80,8 +80,26 @@ const update = async (payload) => {
   };
 };
 
+const deleteOne = async (payload) => {
+  const checkData = await model.findOne(payload)
+  if(checkData.err) {
+    return checkData;
+  }
+
+  const deleteOne = await model.deleteOne(payload);
+  if(deleteOne.err) {
+    return deleteOne;
+  }
+
+  return {
+    err: null,
+    data: deleteOne.data
+  }
+}
+
 module.exports = {
   getCustomers,
   create,
   update,
+  deleteOne
 };

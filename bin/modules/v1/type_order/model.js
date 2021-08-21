@@ -33,6 +33,34 @@ const findOne = async (payload) => {
     }
 }
 
+const findOneId = async (payload) => {
+  const ctx = 'findOne';
+    try {
+      const result = await TypeOrder.findOne({
+        where: {
+          id: payload.id
+        }
+      });
+      if(validate.isEmpty(result)) {
+        console.log(ctx, result, 'isEmpty');
+        return {
+          err: { message: 'Customer not found!', code: 404 },
+          data: null
+        }
+      }
+      return {
+        err: null,
+        data: result
+      }
+    } catch (error) {
+      console.log(ctx, error, 'Catch Error');
+      return {
+        err: { message: 'Internal Server Error!', code: 500 },
+        data: null
+      }
+    }
+}
+
 const findAll = async (payload) => {
   const ctx = 'findAll';
     try {
@@ -52,17 +80,41 @@ const findAll = async (payload) => {
       if(payload.search) {
         query.where = {
           [Op.or]: [{
-            deskripsi: {
+            name: {
               [Op.like]: `%${payload.search}%`
             }
           }, {
-            type: {
+            status: {
               [Op.like]: `%${payload.search}%`
             }
           }]
         };
       }
       const result = await TypeOrder.findAndCountAll(query);
+      return {
+        err: null,
+        data: result
+      }
+    } catch (error) {
+      console.log(ctx, error, 'Catch Error');
+      return {
+        err: { message: 'Internal Server Error!', code: 500 },
+        data: null
+      }
+    }
+}
+
+const findStatus = async (payload) => {
+  const ctx = 'findAll';
+    try {
+      let query = {
+        attributes: ['name', 'note'],
+        where: {
+          merchant_id: payload.merchant_id,
+          status: 1
+        }
+      }
+      const result = await TypeOrder.findAll(query);
       return {
         err: null,
         data: result
@@ -114,9 +166,33 @@ const updateOne = async (value, payload) => {
     }
 }
 
+const deleteOne = async (payload) => {
+  const ctx = 'deleteOne';
+    try {
+      await TypeOrder.destroy({
+        where: {
+          id: payload.id
+        }
+      });
+      return {
+        err: null,
+        data: ''
+      }
+    } catch (error) {
+      console.log(ctx, error, 'Catch Error');
+      return {
+        err: { message: 'Internal Server Error!', code: 500 },
+        data: null
+      }
+    }
+}
+
 module.exports = {
   findOne,
+  findOneId,
   findAll,
+  findStatus,
   insertOne,
-  updateOne
+  updateOne,
+  deleteOne
 }

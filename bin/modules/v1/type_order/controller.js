@@ -23,6 +23,18 @@ const getTypeOrders = async (payload) => {
   };
 };
 
+const getStatusTypeOrders = async (payload) => {
+  const result = await model.findStatus(payload);
+  if (result.err) {
+    return result;
+  }
+
+  return {
+    err: null,
+    data: result.data,
+  };
+};
+
 const create = async (payload) => {
   const result = await model.findOne(payload);
   if (result.err == null) {
@@ -76,8 +88,27 @@ const update = async (payload) => {
   };
 };
 
+const deleteOne = async (payload) => {
+  const checkData = await model.findOneId(payload)
+  if(checkData.err) {
+    return checkData;
+  }
+
+  const deleteOne = await model.deleteOne(payload);
+  if(deleteOne.err) {
+    return deleteOne;
+  }
+
+  return {
+    err: null,
+    data: deleteOne.data
+  }
+}
+
 module.exports = {
   getTypeOrders,
+  getStatusTypeOrders,
   create,
   update,
+  deleteOne
 };

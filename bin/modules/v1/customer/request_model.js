@@ -1,7 +1,11 @@
 const joi = require('joi');
 
+const getCustomer = joi.object({
+  id: joi.string().required(),
+});
+
 const getCustomers = joi.object({
-  //search: joi.string().optional().allow('').default(''),
+  search: joi.string().optional().allow('').default(''),
   limit: joi.number().optional().default(999999999),
   page: joi.number().optional().default(1),
   sortBy: joi.string().valid('name','createdAt').optional().default('createdAt'),
@@ -27,6 +31,7 @@ const update = joi.object({
 });
 
 module.exports = {
+  getCustomer,
   getCustomers,
   create,
   update

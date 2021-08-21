@@ -3,6 +3,34 @@ const Customer = require("../../../helpers/databases/mysql/model/Customer");
 const sequelize = require("sequelize");
 const Op = sequelize.Op;
 
+const findOne = async (payload) => {
+  const ctx = 'findOne';
+    try {
+      const result = await Customer.findOne({
+        where: {
+          id: payload.id
+        }
+      });
+      if(validate.isEmpty(result)) {
+        console.log(ctx, result, 'isEmpty');
+        return {
+          err: { message: 'Customer not found!', code: 404 },
+          data: null
+        }
+      }
+      return {
+        err: null,
+        data: result
+      }
+    } catch (error) {
+      console.log(ctx, error, 'Catch Error');
+      return {
+        err: { message: 'Internal Server Error!', code: 500 },
+        data: null
+      }
+    }
+}
+
 const findIdAndPhone = async (payload) => {
   const ctx = "findOne";
   try {
@@ -107,6 +135,19 @@ const findAll = async (payload) => {
       order: order,
       raw: true,
     };
+    if(payload.search) {
+      query.where = {
+        [Op.or]: [{
+          name: {
+            [Op.like]: `%${payload.search}%`
+          }
+        }, {
+          phone_number: {
+            [Op.like]: `%${payload.search}%`
+          }
+        }]
+      };
+    }
     const result = await Customer.findAndCountAll(query);
     return {
       err: null,
@@ -138,10 +179,33 @@ const insertOne = async (payload) => {
   }
 };
 
+const deleteOne = async (payload) => {
+  const ctx = 'deleteOne';
+    try {
+      await Customer.destroy({
+        where: {
+          id: payload.id
+        }
+      });
+      return {
+        err: null,
+        data: ''
+      }
+    } catch (error) {
+      console.log(ctx, error, 'Catch Error');
+      return {
+        err: { message: 'Internal Server Error!', code: 500 },
+        data: null
+      }
+    }
+}
+
 module.exports = {
+  findOne,
   findIdAndPhone,
   findByPhone,
   updateOne,
   insertOne,
   findAll,
+  deleteOne
 };

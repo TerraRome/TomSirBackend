@@ -13,6 +13,10 @@ const getTypeOrders = joi.object({
   merchant_id: joi.string().required()
 });
 
+const getStatusTypeOrders = joi.object({
+  merchant_id: joi.string().required()
+});
+
 const create = joi.object({
   name: joi.string().required(),
   status: joi.boolean().required(),
@@ -29,6 +33,7 @@ const update = joi.object({
 });
 
 module.exports = {
+  getStatusTypeOrders,
   getTypeOrder,
   getTypeOrders,
   create,

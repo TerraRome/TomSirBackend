@@ -16,7 +16,7 @@ const findOne = async (payload) => {
       if(validate.isEmpty(result)) {
         console.log(ctx, result, 'isEmpty');
         return {
-          err: { message: 'Registration not found!', code: 404 },
+          err: { message: 'Registration not found!', code: 220 },
           data: null
         }
       }

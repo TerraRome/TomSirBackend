@@ -18,6 +18,10 @@ TypeOrder.init(
       type: Sequelize.BOOLEAN,
       allowNull: true,
     },
+    note: {
+      type: Sequelize.STRING(255),
+      allowNull: true,
+    },
     merchant_id: {
       type: Sequelize.STRING(255),
       allowNull: false,

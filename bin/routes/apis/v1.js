@@ -14,6 +14,7 @@ const customerHandler = require('../../modules/v1/customer/api_handler');
 const registrationHandler = require('../../modules/v1/registration/api_handler');
 const kasHandler = require('../../modules/v1/kas/api_handler');
 const typeOrderHandler = require('../../modules/v1/type_order/api_handler');
+const priceProduct = require('../../modules/v1/price_product/api_handler');
 
 router.use('/auth', authenticationHandler);
 router.use('/user', userHandler);
@@ -28,5 +29,6 @@ router.use('/customer', customerHandler);
 router.use('/registration', registrationHandler);
 router.use('/kas', kasHandler);
 router.use('/type-order', typeOrderHandler);
+router.use('/price-product', priceProduct);
 
 module.exports = router;
