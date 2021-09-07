@@ -69,6 +69,7 @@ const create = async (payload) => {
     sell_type: payload.sell_type,
     exp_date: payload.exp_date,
     category_id: payload.category_id,
+    price_product_id: payload.price_product_id,
     merchant_id: payload.merchant_id,
     createdBy: payload.createdBy
   };
@@ -147,6 +148,7 @@ const update = async (payload) => {
     is_disc_percentage: payload.is_disc_percentage,
     exp_date: payload.exp_date,
     category_id: payload.category_id,
+    price_product_id: payload.price_product_id,
   };
 
   if(payload.image) {

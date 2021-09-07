@@ -25,6 +25,8 @@ const findAll = async (payload) => {
         },{
           association: 'ingredient'
         },{
+          association: 'price_product'
+        },{
           association: 'addon_category',
           include: ['addon_menu']
         }],
@@ -72,6 +74,8 @@ const findOne = async (payload) => {
         },{
           association: 'ingredient'
         },{
+          association: 'price_product'
+        },{
           association: 'addon_category',
           include: ['addon_menu']
         }]
@@ -109,6 +113,8 @@ const findBarcode = async (payload) => {
           association: 'category'
         },{
           association: 'ingredient'
+        },{
+          association: 'price_product'
         },{
           association: 'addon_category',
           include: ['addon_menu']

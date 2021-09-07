@@ -60,6 +60,10 @@ Product.init(
       type: Sequelize.STRING(255),
       allowNull: true
     },
+    category_id: {
+      type: Sequelize.STRING(255),
+      allowNull: true
+    },
     merchant_id: {
       type: Sequelize.STRING(255),
       allowNull: false

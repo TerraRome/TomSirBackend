@@ -29,6 +29,7 @@ const create = joi.object({
   sell_type: joi.boolean().optional().default(false),
   exp_date: joi.date().optional(),
   category_id: joi.string().required(),
+  price_product_id: joi.string().optional(),
   addon_categories: joi.array().optional(),
   ingredients: joi.array().items(joi.object({
     qty: joi.number().required(),
@@ -57,6 +58,7 @@ const update = joi.object({
   is_disc_percentage: joi.boolean().required(),
   exp_date: joi.date().optional(),
   category_id: joi.string().required(),
+  price_product_id: joi.string().optional(),
   addon_categories: joi.array().optional(),
   ingredients: joi.array().items(joi.object({
     qty: joi.number().required(),

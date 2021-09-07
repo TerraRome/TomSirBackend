@@ -138,7 +138,6 @@ const create = async (payload) => {
     }
 
     let sub_total = payload.products[i].qty * payload.products[i].price;
-    console.log(sub_total)
     if(currProduct.disc > 0) {
     // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
       let subtract_price = currProduct.disc;
@@ -184,7 +183,7 @@ const create = async (payload) => {
       }
     }
   }
-
+  console.log(listProductUnavailable)
   if(listProductUnavailable.length > 0) {
     return {
       err: {

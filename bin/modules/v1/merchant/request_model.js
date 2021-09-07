@@ -17,6 +17,8 @@ const create = joi.object({
   address: joi.string().optional().allow(''),
   phone_number: joi.string().optional().allow(''),
   footer_note: joi.string().optional().allow(''),
+  server_key: joi.string().required(),
+  client_key: joi.string().required(),
   image: joi.object().optional(),
   size: joi.number().max(10000000).optional(),
   ext: joi.string().valid('jpg','jpeg','png','svg','gif').optional()
@@ -28,6 +30,8 @@ const update = joi.object({
   address: joi.string().optional().allow(''),
   phone_number: joi.string().optional().allow(''),
   footer_note: joi.string().optional().allow(''),
+  server_key: joi.string().required(),
+  client_key: joi.string().required(),
   image: joi.object().optional(),
   size: joi.number().max(10000000).optional(),
   ext: joi.string().valid('jpg','jpeg','png','svg','gif').optional()

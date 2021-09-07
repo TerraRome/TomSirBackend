@@ -49,7 +49,9 @@ const create = async (payload) => {
     name: payload.name,
     address: payload.address,
     phone_number: payload.phone_number,
-    footer_note: payload.footer_note
+    footer_note: payload.footer_note,
+    server_key: payload.server_key,
+    client_key: payload.client_key
   };
 
   if(payload.image) {
@@ -87,7 +89,9 @@ const update = async (payload) => {
     name: payload.name,
     address: payload.address,
     phone_number: payload.phone_number,
-    footer_note: payload.footer_note
+    footer_note: payload.footer_note,
+    server_key: payload.server_key,
+    client_key: payload.client_key
   };
 
   if(payload.image) {

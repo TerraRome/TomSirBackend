@@ -77,6 +77,20 @@ const findAll = async (payload) => {
         order: order,
         distinct: true
       }
+      if(payload.start_date && payload.end_date) {
+        let start = new Date(payload.start_date);
+        start.setHours(00);
+        start.setMinutes(00);
+        start.setSeconds(00);
+        let end = new Date(payload.end_date);
+        end.setHours(23);
+        end.setMinutes(59);
+        end.setSeconds(59);
+        query.where.createdAt = {
+          [Op.gte]: start,
+          [Op.lte]: end
+        };
+      }
       if(payload.search) {
         query.where = {
           [Op.or]: [{

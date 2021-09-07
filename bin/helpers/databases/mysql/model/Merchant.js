@@ -32,6 +32,14 @@ Merchant.init(
     },
     footer_note: {
       type: Sequelize.TEXT
+    },
+    server_key: {
+      type: Sequelize.STRING(255),
+      allowNull: false
+    },
+    client_key: {
+      type: Sequelize.STRING(255),
+      allowNull: false
     }
   },
   {
