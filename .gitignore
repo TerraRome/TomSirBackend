@@ -42,7 +42,7 @@ node_modules/
 jspm_packages/
 
 # Public directories
-public/
+#public/
 
 # TypeScript v1 declaration files
 typings/

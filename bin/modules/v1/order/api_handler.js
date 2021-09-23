@@ -7,7 +7,7 @@ const jwtAuth = require('../../../helpers/authentication');
 router.get('/', async(req, res) => {
   const payload = {
     ...req.query,
-    merchant_id: req.decodedToken.merchant ? req.decodedToken.merchant.id || undefined : undefined
+    //merchant_id: req.decodedToken.merchant ? req.decodedToken.merchant.id || undefined : undefined
   };
   const validatePayload = await common.isValidPayload(payload, reqModel.getOrders);
   const postRequest = async (result) => {
