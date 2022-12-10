@@ -8,8 +8,8 @@ const getMerchants = joi.object({
   search: joi.string().optional().allow('').default(''),
   limit: joi.number().optional().default(999999999),
   page: joi.number().optional().default(1),
-  sortBy: joi.string().valid('name','createdAt').optional().default('name'),
-  order: joi.string().valid('ASC','DESC').optional().default('ASC')
+  sortBy: joi.string().valid('name', 'createdAt').optional().default('name'),
+  order: joi.string().valid('ASC', 'DESC').optional().default('ASC')
 });
 
 const create = joi.object({
@@ -17,11 +17,11 @@ const create = joi.object({
   address: joi.string().optional().allow(''),
   phone_number: joi.string().optional().allow(''),
   footer_note: joi.string().optional().allow(''),
-  server_key: joi.string().required(),
-  client_key: joi.string().required(),
+  // server_key: joi.string().required(),
+  // client_key: joi.string().required(),
   image: joi.object().optional(),
   size: joi.number().max(10000000).optional(),
-  ext: joi.string().valid('jpg','jpeg','png','svg','gif').optional()
+  ext: joi.string().valid('jpg', 'jpeg', 'png', 'svg', 'gif').optional()
 });
 
 const update = joi.object({
@@ -30,11 +30,11 @@ const update = joi.object({
   address: joi.string().optional().allow(''),
   phone_number: joi.string().optional().allow(''),
   footer_note: joi.string().optional().allow(''),
-  server_key: joi.string().required(),
-  client_key: joi.string().required(),
+  // server_key: joi.string().required(),
+  // client_key: joi.string().required(),
   image: joi.object().optional(),
   size: joi.number().max(10000000).optional(),
-  ext: joi.string().valid('jpg','jpeg','png','svg','gif').optional()
+  ext: joi.string().valid('jpg', 'jpeg', 'png', 'svg', 'gif').optional()
 });
 
 module.exports = {

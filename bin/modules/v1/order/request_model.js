@@ -8,9 +8,9 @@ const getOrders = joi.object({
   search: joi.string().optional().allow('').default(''),
   limit: joi.number().optional().default(10000000000000),
   page: joi.number().optional().default(1),
-  sortBy: joi.string().valid('type','code','createdAt').optional().default('createdAt'),
-  order: joi.string().valid('ASC','DESC').optional().default('ASC'),
-  status: joi.string().valid('paid','hold','refund').optional().allow('').default(''),
+  sortBy: joi.string().valid('type', 'code', 'createdAt').optional().default('createdAt'),
+  order: joi.string().valid('ASC', 'DESC').optional().default('ASC'),
+  status: joi.string().valid('paid', 'hold', 'refund').optional().allow('').default(''),
   type: joi.string().optional().allow('').default(''),
   start_date: joi.date().optional().allow('').default(''),
   end_date: joi.date().optional().allow('').default(''),
@@ -21,7 +21,8 @@ const getOrders = joi.object({
 
 const create = joi.object({
   type_order: joi.string().required(),
-  note_order: joi.string().optional().allow('').default(''),
+  note_order: joi.string().required().allow('').default(''),
+  whatsapp: joi.string().required().allow('').default(''),
   products: joi.array().items(joi.object({
     qty: joi.number().required(),
     price: joi.number().required(),
@@ -35,7 +36,7 @@ const create = joi.object({
   payment_type: joi.string().valid('cash').required(),
   total_pay: joi.number().required(),
   payment_return: joi.number().optional(),
-  status: joi.string().valid('paid','hold').required(),
+  status: joi.string().valid('paid', 'hold').required(),
   merchant_id: joi.string().required().messages({
     'any.required': `Akun anda tidak memiliki merchant`
   })
@@ -44,7 +45,8 @@ const create = joi.object({
 const update = joi.object({
   id: joi.string().required(),
   type_order: joi.string().required(),
-  note_order: joi.string().optional().allow('').default(''),
+  note_order: joi.string().required().allow('').default(''),
+  whatsapp: joi.string().required().allow('').default(''),
   products: joi.array().items(joi.object({
     qty: joi.number().required(),
     price: joi.number().required(),
@@ -59,7 +61,7 @@ const update = joi.object({
   payment_type: joi.string().valid('cash').required(),
   total_pay: joi.number().required(),
   payment_return: joi.number().optional(),
-  status: joi.string().valid('paid','hold','refund').required()
+  status: joi.string().valid('paid', 'hold', 'refund').required()
 });
 
 const addProduct = joi.object({

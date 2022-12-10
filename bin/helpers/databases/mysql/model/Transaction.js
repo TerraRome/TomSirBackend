@@ -3,7 +3,7 @@ const Model = Sequelize.Model;
 const sequelize = require('../connection');
 const TransactionProduct = require('./TransactionProduct');
 
-class Transaction extends Model {}
+class Transaction extends Model { }
 Transaction.init(
   {
     id: {
@@ -21,6 +21,10 @@ Transaction.init(
     },
     note: {
       type: Sequelize.TEXT
+    },
+    whatsapp: {
+      type: Sequelize.STRING(25), // dine_in | take_away, etc
+      allowNull: true
     },
     tax_percentage: {
       type: Sequelize.INTEGER(11),

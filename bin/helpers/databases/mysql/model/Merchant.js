@@ -9,7 +9,7 @@ const Product = require('./Product');
 const Transaction = require('./Transaction');
 const Customer = require('./Customer');
 
-class Merchant extends Model {}
+class Merchant extends Model { }
 Merchant.init(
   {
     id: {
@@ -33,14 +33,14 @@ Merchant.init(
     footer_note: {
       type: Sequelize.TEXT
     },
-    server_key: {
-      type: Sequelize.STRING(255),
-      allowNull: false
-    },
-    client_key: {
-      type: Sequelize.STRING(255),
-      allowNull: false
-    }
+    // server_key: {
+    //   type: Sequelize.STRING(255),
+    //   allowNull: false
+    // },
+    // client_key: {
+    //   type: Sequelize.STRING(255),
+    //   allowNull: false
+    // }
   },
   {
     sequelize,
@@ -49,7 +49,7 @@ Merchant.init(
   }
 );
 
-Merchant.hasMany(User, { 
+Merchant.hasMany(User, {
   as: 'user',
   foreignKey: 'merchant_id',
   onDelete: 'CASCADE',
@@ -57,46 +57,46 @@ Merchant.hasMany(User, {
 });
 User.belongsTo(Merchant, { as: 'merchant', foreignKey: 'merchant_id' });
 
-Merchant.hasMany(Category, { 
+Merchant.hasMany(Category, {
   as: 'category',
   foreignKey: 'merchant_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE'
 });
 
-Merchant.hasMany(Ingredient, { 
+Merchant.hasMany(Ingredient, {
   as: 'ingredient',
   foreignKey: 'merchant_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE'
 });
 
-Merchant.hasMany(AddonCategory, { 
+Merchant.hasMany(AddonCategory, {
   as: 'addon_category',
   foreignKey: 'merchant_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE'
 });
 
-Merchant.hasMany(Product, { 
+Merchant.hasMany(Product, {
   as: 'product',
   foreignKey: 'merchant_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE'
 });
 
-Merchant.hasMany(Transaction, { 
+Merchant.hasMany(Transaction, {
   as: 'transaction',
   foreignKey: 'merchant_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE'
 });
 
-Merchant.hasMany(Customer, { 
-    as: 'customer',
-    foreignKey: 'merchant_id',
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-  });
+Merchant.hasMany(Customer, {
+  as: 'customer',
+  foreignKey: 'merchant_id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
 
 module.exports = Merchant;

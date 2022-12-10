@@ -10,7 +10,7 @@ const merchantModel = require('../merchant/model');
 
 const getOrder = async (payload) => {
   const result = await model.findOne(payload)
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -23,7 +23,7 @@ const getOrder = async (payload) => {
 
     isProductExist = d.product ? true : false;
     let capitalOneProduct = 0;
-    if(isProductExist) {
+    if (isProductExist) {
       d.product.ingredient.map(i => {
         capitalOneProduct += i.price * i.tbl_product_ingredient.qty
       });
@@ -51,7 +51,7 @@ const getOrder = async (payload) => {
 
 const getOrders = async (payload) => {
   const result = await model.findAll(payload);
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -79,12 +79,12 @@ const create = async (payload) => {
   }
 
   const listProduct = await productModel.findMultpileWithIngredient(listProductId);
-  if(listProduct.err) {
+  if (listProduct.err) {
     return listProduct;
   }
 
   const listAddon = await addonMenuModel.findMultpile(listAddonId);
-  if(listAddon.err) {
+  if (listAddon.err) {
     return listAddon;
   }
 
@@ -93,6 +93,7 @@ const create = async (payload) => {
     code: payload.type_order == 'dine_in' ? 'DI-' : 'TA-',
     type: payload.type_order,
     note: payload.note_order,
+    whatsapp: payload.whatsapp,
     tax_percentage: payload.tax_order_percentage,
     total_price: 0,
     total_tax: 0,
@@ -109,9 +110,9 @@ const create = async (payload) => {
   let listAddonUnavailable = [];
   let listProductNewStock = [];
   for (let i = 0; i < payload.products.length; i++) {
-    
+
     let currProduct = listProduct.data.find(d => d.id == payload.products[i].id);
-    if(!currProduct) {
+    if (!currProduct) {
       listProductUnavailable.push({
         id: payload.products[i].id
       });
@@ -120,14 +121,14 @@ const create = async (payload) => {
     currProduct = currProduct.dataValues;
     currProduct.image = config.baseUrl + currProduct.image;
 
-    if(currProduct.stock < payload.products[i].qty) {
+    if (currProduct.stock < payload.products[i].qty) {
       listProductUnavailable.push({
         id: currProduct.id,
         name: currProduct.name
       });
     } else {
       let checkIndex = listProductNewStock.findIndex(d => d.id == currProduct.id);
-      if(checkIndex < 0) {
+      if (checkIndex < 0) {
         listProductNewStock.push({
           id: currProduct.id,
           qty: payload.products[i].qty
@@ -138,19 +139,19 @@ const create = async (payload) => {
     }
 
     let sub_total = payload.products[i].qty * payload.products[i].price;
-    if(currProduct.disc > 0) {
-    // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
+    if (currProduct.disc > 0) {
+      // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
       let subtract_price = currProduct.disc;
-      if(currProduct.is_disc_percentage) {
+      if (currProduct.is_disc_percentage) {
         subtract_price = currProduct.price * currProduct.disc / 100;
       }
       sub_total -= (payload.products[i].qty * subtract_price);
     }
-    
+
     currProduct.addons = [];
     for (let j = 0; j < payload.products[i].addons.length; j++) {
       let currAddon = listAddon.data.find(d => d.id == payload.products[i].addons[j]);
-      if(!currAddon) {
+      if (!currAddon) {
         listAddonUnavailable.push({
           id: payload.products[i].addons[j]
         });
@@ -173,7 +174,7 @@ const create = async (payload) => {
 
     for (let j = 0; j < currProduct.ingredient.length; j++) {
       let checkIndex = listUsedIngredient.findIndex(d => d.id == currProduct.ingredient[j].id);
-      if(checkIndex < 0) {
+      if (checkIndex < 0) {
         listUsedIngredient.push({
           id: currProduct.ingredient[j].id,
           qty: payload.products[i].qty * currProduct.ingredient[j].tbl_product_ingredient.qty
@@ -184,7 +185,7 @@ const create = async (payload) => {
     }
   }
   console.log(listProductUnavailable)
-  if(listProductUnavailable.length > 0) {
+  if (listProductUnavailable.length > 0) {
     return {
       err: {
         data: listProductUnavailable,
@@ -194,7 +195,7 @@ const create = async (payload) => {
       data: null
     };
   }
-  if(listAddonUnavailable.length > 0) {
+  if (listAddonUnavailable.length > 0) {
     return {
       err: {
         data: listAddonUnavailable,
@@ -207,8 +208,8 @@ const create = async (payload) => {
 
   let code_number = 1;
   const lastTransaction = await model.findLastTransaction({ code: transactionObj.code, merchant_id: payload.merchant_id });
-  if(lastTransaction.err) {
-    if(lastTransaction.err.code !== 404) {
+  if (lastTransaction.err) {
+    if (lastTransaction.err.code !== 404) {
       return lastTransaction;
     }
   } else {
@@ -226,12 +227,12 @@ const create = async (payload) => {
   transactionObj.payment_return = transactionObj.total_pay - transactionObj.total_price;
 
   const insertTransaction = await model.insertTransaction(transactionObj);
-  if(insertTransaction.err) {
+  if (insertTransaction.err) {
     return insertTransaction;
   }
 
   const insertTransactionProduct = await model.insertTransactionProduct(transactionProductObj);
-  if(insertTransactionProduct.err) {
+  if (insertTransactionProduct.err) {
     return insertTransactionProduct;
   }
 
@@ -239,7 +240,7 @@ const create = async (payload) => {
   ingredientModel.updateStock(listUsedIngredient);
 
   const result = await model.findOne({ id: transactionObj.id })
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -264,14 +265,14 @@ const create = async (payload) => {
 
 const update = async (payload) => {
   const checkTrans = await model.findOne(payload)
-  if(checkTrans.err) {
+  if (checkTrans.err) {
     return checkTrans;
   }
 
-  if(checkTrans.data.status != 'hold') {
+  if (checkTrans.data.status != 'hold') {
     return {
       err: {
-        message: 'You can only update `hold` transaction!'+checkTrans.data.status,
+        message: 'You can only update `hold` transaction!' + checkTrans.data.status,
         code: 400
       },
       data: null
@@ -281,6 +282,7 @@ const update = async (payload) => {
   const transactionObj = {
     type: payload.type_order,
     note: payload.note_order,
+    whatsapp: payload.whatsapp,
     tax_percentage: payload.tax_order_percentage,
     total_price: 0,
     total_tax: 0,
@@ -294,7 +296,7 @@ const update = async (payload) => {
   let listTransProductId = [];
   let listAddonId = [];
   for (let i = 0; i < payload.products.length; i++) {
-    if(payload.products[i].transaction_product_id) {
+    if (payload.products[i].transaction_product_id) {
       listTransProductId.push(payload.products[i].transaction_product_id);
     } else {
       listProductAddId.push(payload.products[i].id);
@@ -305,17 +307,17 @@ const update = async (payload) => {
   }
 
   const listProductAdd = await productModel.findMultpileWithIngredient(listProductAddId);
-  if(listProductAdd.err) {
+  if (listProductAdd.err) {
     return listProductAdd;
   }
 
   const listTransProduct = await model.findMultipleTransactionProduct(listTransProductId);
-  if(listTransProduct.err && listTransProduct.err.code !== 404) {
+  if (listTransProduct.err && listTransProduct.err.code !== 404) {
     return listTransProduct;
   }
 
   const listAddon = await addonMenuModel.findMultpile(listAddonId);
-  if(listAddon.err) {
+  if (listAddon.err) {
     return listAddon;
   }
 
@@ -327,9 +329,9 @@ const update = async (payload) => {
 
   for (let i = 0; i < checkTrans.data.transaction_product.length; i++) {
     let checkIndex = payload.products.findIndex(d => d.transaction_product_id == checkTrans.data.transaction_product[i].id);
-    if(checkIndex < 0) {
+    if (checkIndex < 0) {
       let checkProductIndex = listProductNewStock.findIndex(d => d.id == checkTrans.data.transaction_product[i].product.id);
-      if(checkProductIndex < 0) {
+      if (checkProductIndex < 0) {
         listProductNewStock.push({
           id: checkTrans.data.transaction_product[i].product.id,
           qty: 0 - checkTrans.data.transaction_product[i].qty
@@ -339,7 +341,7 @@ const update = async (payload) => {
       }
       for (let j = 0; j < checkTrans.data.transaction_product[i].product.ingredient.length; j++) {
         let checkIngredientIndex = listUsedIngredient.findIndex(d => d.id == checkTrans.data.transaction_product[i].product.ingredient[j].id);
-        if(checkIngredientIndex < 0) {
+        if (checkIngredientIndex < 0) {
           listUsedIngredient.push({
             id: checkTrans.data.transaction_product[i].product.ingredient[j].id,
             qty: 0 - (checkTrans.data.transaction_product[i].qty * checkTrans.data.transaction_product[i].product.ingredient[j].tbl_product_ingredient.qty)
@@ -354,12 +356,12 @@ const update = async (payload) => {
   for (let i = 0; i < payload.products.length; i++) {
     let currProduct = listProductAdd.data.find(d => d.id == payload.products[i].id);
     let diffQty = payload.products[i].qty;
-    if(payload.products[i].transaction_product_id) {
+    if (payload.products[i].transaction_product_id) {
       let checkTransProduct = listTransProduct.data.find(d => d.id == payload.products[i].transaction_product_id);
       diffQty -= checkTransProduct.dataValues.qty;
       currProduct = checkTransProduct.dataValues.product;
     }
-    if(!currProduct) {
+    if (!currProduct) {
       listProductUnavailable.push({
         id: payload.products[i].id
       });
@@ -368,7 +370,7 @@ const update = async (payload) => {
     currProduct = currProduct.dataValues;
     currProduct.image = config.baseUrl + currProduct.image;
 
-    if(currProduct.stock < diffQty) {
+    if (currProduct.stock < diffQty) {
       listProductUnavailable.push({
         id: currProduct.id,
         name: currProduct.name,
@@ -376,30 +378,30 @@ const update = async (payload) => {
       });
     } else {
       let checkIndex = listProductNewStock.findIndex(d => d.id == currProduct.id);
-      if(checkIndex < 0) {
+      if (checkIndex < 0) {
         listProductNewStock.push({
           id: currProduct.id,
           qty: diffQty
         });
       } else {
-        listProductNewStock[checkIndex].qty += diffQty; 
+        listProductNewStock[checkIndex].qty += diffQty;
       }
     }
 
     let sub_total = payload.products[i].qty * currProduct.price;
-    if(currProduct.disc > 0) {
-    // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
+    if (currProduct.disc > 0) {
+      // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
       let subtract_price = currProduct.disc;
-      if(currProduct.is_disc_percentage) {
+      if (currProduct.is_disc_percentage) {
         subtract_price = currProduct.price * currProduct.disc / 100;
       }
       sub_total -= (payload.products[i].qty * subtract_price);
     }
-    
+
     currProduct.addons = [];
     for (let j = 0; j < payload.products[i].addons.length; j++) {
       let currAddon = listAddon.data.find(d => d.id == payload.products[i].addons[j]);
-      if(!currAddon) {
+      if (!currAddon) {
         listAddonUnavailable.push({
           id: payload.products[i].addons[j]
         });
@@ -422,7 +424,7 @@ const update = async (payload) => {
 
     for (let j = 0; j < currProduct.ingredient.length; j++) {
       let checkIndex = listUsedIngredient.findIndex(d => d.id == currProduct.ingredient[j].id);
-      if(checkIndex < 0) {
+      if (checkIndex < 0) {
         listUsedIngredient.push({
           id: currProduct.ingredient[j].id,
           qty: diffQty * currProduct.ingredient[j].tbl_product_ingredient.qty
@@ -433,7 +435,7 @@ const update = async (payload) => {
     }
   }
 
-  if(listProductUnavailable.length > 0) {
+  if (listProductUnavailable.length > 0) {
     return {
       err: {
         data: listProductUnavailable,
@@ -443,7 +445,7 @@ const update = async (payload) => {
       data: null
     };
   }
-  if(listAddonUnavailable.length > 0) {
+  if (listAddonUnavailable.length > 0) {
     return {
       err: {
         data: listAddonUnavailable,
@@ -459,17 +461,17 @@ const update = async (payload) => {
   transactionObj.payment_return = transactionObj.total_pay - transactionObj.total_price;
 
   const deleteTransactionProduct = await model.deleteTransactionProductByTransactionId({ id: checkTrans.data.id });
-  if(deleteTransactionProduct.err) {
+  if (deleteTransactionProduct.err) {
     return deleteTransactionProduct;
   }
 
   const updateTransaction = await model.updateTransaction(transactionObj, { id: checkTrans.data.id });
-  if(updateTransaction.err) {
+  if (updateTransaction.err) {
     return updateTransaction;
   }
 
   const insertTransactionProduct = await model.insertTransactionProduct(transactionProductObj);
-  if(insertTransactionProduct.err) {
+  if (insertTransactionProduct.err) {
     return insertTransactionProduct;
   }
 
@@ -477,7 +479,7 @@ const update = async (payload) => {
   ingredientModel.updateStock(listUsedIngredient);
 
   const result = await model.findOne({ id: checkTrans.data.id })
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -497,18 +499,19 @@ const update = async (payload) => {
   return {
     err: null,
     data: result.data
-  }  
+  }
 }
 
 const refund = async (payload) => {
   const checkTrans = await model.findOne(payload)
-  if(checkTrans.err) {
+  if (checkTrans.err) {
     return checkTrans;
   }
 
   const transactionObj = {
     type: payload.type_order,
     note: payload.note_order,
+    whatsapp: payload.whatsapp,
     tax_percentage: payload.tax_order_percentage,
     total_price: 0,
     total_tax: 0,
@@ -522,7 +525,7 @@ const refund = async (payload) => {
   let listTransProductId = [];
   let listAddonId = [];
   for (let i = 0; i < payload.products.length; i++) {
-    if(payload.products[i].transaction_product_id) {
+    if (payload.products[i].transaction_product_id) {
       listTransProductId.push(payload.products[i].transaction_product_id);
     } else {
       listProductAddId.push(payload.products[i].id);
@@ -533,17 +536,17 @@ const refund = async (payload) => {
   }
 
   const listProductAdd = await productModel.findMultpileWithIngredient(listProductAddId);
-  if(listProductAdd.err) {
+  if (listProductAdd.err) {
     return listProductAdd;
   }
 
   const listTransProduct = await model.findMultipleTransactionProduct(listTransProductId);
-  if(listTransProduct.err && listTransProduct.err.code !== 404) {
+  if (listTransProduct.err && listTransProduct.err.code !== 404) {
     return listTransProduct;
   }
 
   const listAddon = await addonMenuModel.findMultpile(listAddonId);
-  if(listAddon.err) {
+  if (listAddon.err) {
     return listAddon;
   }
 
@@ -555,9 +558,9 @@ const refund = async (payload) => {
 
   for (let i = 0; i < checkTrans.data.transaction_product.length; i++) {
     let checkIndex = payload.products.findIndex(d => d.transaction_product_id == checkTrans.data.transaction_product[i].id);
-    if(checkIndex < 0) {
+    if (checkIndex < 0) {
       let checkProductIndex = listProductNewStock.findIndex(d => d.id == checkTrans.data.transaction_product[i].product.id);
-      if(checkProductIndex < 0) {
+      if (checkProductIndex < 0) {
         listProductNewStock.push({
           id: checkTrans.data.transaction_product[i].product.id,
           qty: 0 - checkTrans.data.transaction_product[i].qty
@@ -567,7 +570,7 @@ const refund = async (payload) => {
       }
       for (let j = 0; j < checkTrans.data.transaction_product[i].product.ingredient.length; j++) {
         let checkIngredientIndex = listUsedIngredient.findIndex(d => d.id == checkTrans.data.transaction_product[i].product.ingredient[j].id);
-        if(checkIngredientIndex < 0) {
+        if (checkIngredientIndex < 0) {
           listUsedIngredient.push({
             id: checkTrans.data.transaction_product[i].product.ingredient[j].id,
             qty: 0 - (checkTrans.data.transaction_product[i].qty * checkTrans.data.transaction_product[i].product.ingredient[j].tbl_product_ingredient.qty)
@@ -582,12 +585,12 @@ const refund = async (payload) => {
   for (let i = 0; i < payload.products.length; i++) {
     let currProduct = listProductAdd.data.find(d => d.id == payload.products[i].id);
     let diffQty = payload.products[i].qty;
-    if(payload.products[i].transaction_product_id) {
+    if (payload.products[i].transaction_product_id) {
       let checkTransProduct = listTransProduct.data.find(d => d.id == payload.products[i].transaction_product_id);
       diffQty -= checkTransProduct.dataValues.qty;
       currProduct = checkTransProduct.dataValues.product;
     }
-    if(!currProduct) {
+    if (!currProduct) {
       listProductUnavailable.push({
         id: payload.products[i].id
       });
@@ -596,7 +599,7 @@ const refund = async (payload) => {
     currProduct = currProduct.dataValues;
     currProduct.image = config.baseUrl + currProduct.image;
 
-    if(currProduct.stock < diffQty) {
+    if (currProduct.stock < diffQty) {
       listProductUnavailable.push({
         id: currProduct.id,
         name: currProduct.name,
@@ -604,30 +607,30 @@ const refund = async (payload) => {
       });
     } else {
       let checkIndex = listProductNewStock.findIndex(d => d.id == currProduct.id);
-      if(checkIndex < 0) {
+      if (checkIndex < 0) {
         listProductNewStock.push({
           id: currProduct.id,
           qty: diffQty
         });
       } else {
-        listProductNewStock[checkIndex].qty += diffQty; 
+        listProductNewStock[checkIndex].qty += diffQty;
       }
     }
 
     let sub_total = payload.products[i].qty * currProduct.price;
-    if(currProduct.disc > 0) {
-    // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
+    if (currProduct.disc > 0) {
+      // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
       let subtract_price = currProduct.disc;
-      if(currProduct.is_disc_percentage) {
+      if (currProduct.is_disc_percentage) {
         subtract_price = currProduct.price * currProduct.disc / 100;
       }
       sub_total -= (payload.products[i].qty * subtract_price);
     }
-    
+
     currProduct.addons = [];
     for (let j = 0; j < payload.products[i].addons.length; j++) {
       let currAddon = listAddon.data.find(d => d.id == payload.products[i].addons[j]);
-      if(!currAddon) {
+      if (!currAddon) {
         listAddonUnavailable.push({
           id: payload.products[i].addons[j]
         });
@@ -650,7 +653,7 @@ const refund = async (payload) => {
 
     for (let j = 0; j < currProduct.ingredient.length; j++) {
       let checkIndex = listUsedIngredient.findIndex(d => d.id == currProduct.ingredient[j].id);
-      if(checkIndex < 0) {
+      if (checkIndex < 0) {
         listUsedIngredient.push({
           id: currProduct.ingredient[j].id,
           qty: diffQty * currProduct.ingredient[j].tbl_product_ingredient.qty
@@ -661,7 +664,7 @@ const refund = async (payload) => {
     }
   }
 
-  if(listProductUnavailable.length > 0) {
+  if (listProductUnavailable.length > 0) {
     return {
       err: {
         data: listProductUnavailable,
@@ -671,7 +674,7 @@ const refund = async (payload) => {
       data: null
     };
   }
-  if(listAddonUnavailable.length > 0) {
+  if (listAddonUnavailable.length > 0) {
     return {
       err: {
         data: listAddonUnavailable,
@@ -687,17 +690,17 @@ const refund = async (payload) => {
   transactionObj.payment_return = transactionObj.total_pay - transactionObj.total_price;
 
   const deleteTransactionProduct = await model.deleteTransactionProductByTransactionId({ id: checkTrans.data.id });
-  if(deleteTransactionProduct.err) {
+  if (deleteTransactionProduct.err) {
     return deleteTransactionProduct;
   }
 
   const updateTransaction = await model.updateTransaction(transactionObj, { id: checkTrans.data.id });
-  if(updateTransaction.err) {
+  if (updateTransaction.err) {
     return updateTransaction;
   }
 
   const insertTransactionProduct = await model.insertTransactionProduct(transactionProductObj);
-  if(insertTransactionProduct.err) {
+  if (insertTransactionProduct.err) {
     return insertTransactionProduct;
   }
 
@@ -705,7 +708,7 @@ const refund = async (payload) => {
   //ingredientModel.updateStock(listUsedIngredient);
 
   const result = await model.findOne({ id: checkTrans.data.id })
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -725,16 +728,16 @@ const refund = async (payload) => {
   return {
     err: null,
     data: result.data
-  }  
+  }
 }
 
 const deleteOrder = async (payload) => {
   const checkTrans = await model.findOne(payload)
-  if(checkTrans.err) {
+  if (checkTrans.err) {
     return checkTrans;
   }
 
-  if(checkTrans.data.status != 'hold') {
+  if (checkTrans.data.status != 'hold') {
     return {
       err: {
         message: 'You can only cancel `hold` transaction!',
@@ -749,7 +752,7 @@ const deleteOrder = async (payload) => {
 
   for (let i = 0; i < checkTrans.data.transaction_product.length; i++) {
     let checkProductIndex = listProductNewStock.findIndex(d => d.id == checkTrans.data.transaction_product[i].product.id);
-    if(checkProductIndex < 0) {
+    if (checkProductIndex < 0) {
       listProductNewStock.push({
         id: checkTrans.data.transaction_product[i].product.id,
         qty: 0 - checkTrans.data.transaction_product[i].qty
@@ -759,7 +762,7 @@ const deleteOrder = async (payload) => {
     }
     for (let j = 0; j < checkTrans.data.transaction_product[i].product.ingredient.length; j++) {
       let checkIngredientIndex = listUsedIngredient.findIndex(d => d.id == checkTrans.data.transaction_product[i].product.ingredient[j].id);
-      if(checkIngredientIndex < 0) {
+      if (checkIngredientIndex < 0) {
         listUsedIngredient.push({
           id: checkTrans.data.transaction_product[i].product.ingredient[j].id,
           qty: 0 - (checkTrans.data.transaction_product[i].qty * checkTrans.data.transaction_product[i].product.ingredient[j].tbl_product_ingredient.qty)
@@ -771,7 +774,7 @@ const deleteOrder = async (payload) => {
   }
 
   const deleteTransaction = await model.deleteTransaction(payload);
-  if(deleteTransaction.err) {
+  if (deleteTransaction.err) {
     return deleteTransaction;
   }
 
@@ -786,11 +789,11 @@ const deleteOrder = async (payload) => {
 
 const addProduct = async (payload) => {
   const checkTrans = await model.findOne(payload)
-  if(checkTrans.err) {
+  if (checkTrans.err) {
     return checkTrans;
   }
 
-  if(checkTrans.data.status != 'hold') {
+  if (checkTrans.data.status != 'hold') {
     return {
       err: {
         message: 'You can only add product on `hold` transaction!',
@@ -810,12 +813,12 @@ const addProduct = async (payload) => {
   }
 
   const listProduct = await productModel.findMultpileWithIngredient(listProductId);
-  if(listProduct.err) {
+  if (listProduct.err) {
     return listProduct;
   }
 
   const listAddon = await addonMenuModel.findMultpile(listAddonId);
-  if(listAddon.err) {
+  if (listAddon.err) {
     return listAddon;
   }
 
@@ -830,9 +833,9 @@ const addProduct = async (payload) => {
   let listAddonUnavailable = [];
   let listProductNewStock = [];
   for (let i = 0; i < payload.products.length; i++) {
-    
+
     let currProduct = listProduct.data.find(d => d.id == payload.products[i].id);
-    if(!currProduct) {
+    if (!currProduct) {
       listProductUnavailable.push({
         id: payload.products[i].id
       });
@@ -841,7 +844,7 @@ const addProduct = async (payload) => {
     currProduct = currProduct.dataValues;
     currProduct.image = config.baseUrl + currProduct.image;
 
-    if(currProduct.stock < payload.products[i].qty) {
+    if (currProduct.stock < payload.products[i].qty) {
       listProductUnavailable.push({
         id: currProduct.id,
         name: currProduct.name
@@ -854,19 +857,19 @@ const addProduct = async (payload) => {
     }
 
     let sub_total = payload.products[i].qty * currProduct.price;
-    if(currProduct.disc > 0) {
-    // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
+    if (currProduct.disc > 0) {
+      // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
       let subtract_price = currProduct.disc;
-      if(currProduct.is_disc_percentage) {
+      if (currProduct.is_disc_percentage) {
         subtract_price = currProduct.price * currProduct.disc / 100;
       }
       sub_total -= (payload.products[i].qty * subtract_price);
     }
-    
+
     currProduct.addons = [];
     for (let j = 0; j < payload.products[i].addons.length; j++) {
       let currAddon = listAddon.data.find(d => d.id == payload.products[i].addons[j]);
-      if(!currAddon) {
+      if (!currAddon) {
         listAddonUnavailable.push({
           id: payload.products[i].addons[j]
         });
@@ -895,7 +898,7 @@ const addProduct = async (payload) => {
     }
   }
 
-  if(listProductUnavailable.length > 0) {
+  if (listProductUnavailable.length > 0) {
     return {
       err: {
         data: listProductUnavailable,
@@ -905,7 +908,7 @@ const addProduct = async (payload) => {
       data: null
     };
   }
-  if(listAddonUnavailable.length > 0) {
+  if (listAddonUnavailable.length > 0) {
     return {
       err: {
         data: listAddonUnavailable,
@@ -921,7 +924,7 @@ const addProduct = async (payload) => {
   transactionObj.payment_return = transactionObj.total_pay - transactionObj.total_price;
 
   const insertTransactionProduct = await model.insertTransactionProduct(transactionProductObj);
-  if(insertTransactionProduct.err) {
+  if (insertTransactionProduct.err) {
     return insertTransactionProduct;
   }
 
@@ -931,7 +934,7 @@ const addProduct = async (payload) => {
     payment_return: transactionObj.payment_return
   }
   const updateTrans = await model.updateTransaction(updateTransObj, { id: transactionObj.id });
-  if(updateTrans.err) {
+  if (updateTrans.err) {
     return updateTrans;
   }
 
@@ -939,7 +942,7 @@ const addProduct = async (payload) => {
   ingredientModel.updateStock(listUsedIngredient);
 
   const result = await model.findOne({ id: transactionObj.id })
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -964,11 +967,11 @@ const addProduct = async (payload) => {
 
 const updateProduct = async (payload) => {
   const checkTransProduct = await model.findTransactionProduct(payload)
-  if(checkTransProduct.err) {
+  if (checkTransProduct.err) {
     return checkTransProduct;
   }
 
-  if(checkTransProduct.data.transaction.status != 'hold') {
+  if (checkTransProduct.data.transaction.status != 'hold') {
     return {
       err: {
         message: 'You can only update `hold` transaction!',
@@ -979,7 +982,7 @@ const updateProduct = async (payload) => {
   }
 
   const listAddon = await addonMenuModel.findMultpile(payload.addons);
-  if(listAddon.err) {
+  if (listAddon.err) {
     return listAddon;
   }
 
@@ -993,7 +996,7 @@ const updateProduct = async (payload) => {
   let listAddonUnavailable = [];
   let listProductNewStock = [];
 
-  if(currProduct.stock < diffQty) {
+  if (currProduct.stock < diffQty) {
     listProductUnavailable.push({
       id: currProduct.id,
       name: currProduct.name
@@ -1007,20 +1010,20 @@ const updateProduct = async (payload) => {
 
   let sub_total = payload.qty * currProduct.price;
   let sub_total_diff = diffQty * currProduct.price;
-  if(currProduct.disc > 0) {
-  // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
+  if (currProduct.disc > 0) {
+    // if(currProduct.disc > 0 && new Date() < new Date(currProduct.exp_date)) {
     let subtract_price = currProduct.disc;
-    if(currProduct.is_disc_percentage) {
+    if (currProduct.is_disc_percentage) {
       subtract_price = currProduct.price * currProduct.disc / 100;
     }
     sub_total -= (payload.qty * subtract_price);
     sub_total_diff -= (diffQty * subtract_price);
   }
-  
+
   currProduct.addons = [];
   for (let j = 0; j < payload.addons.length; j++) {
     let currAddon = listAddon.data.find(d => d.id == payload.addons[j]);
-    if(!currAddon) {
+    if (!currAddon) {
       listAddonUnavailable.push({
         id: payload.addons[j]
       });
@@ -1053,7 +1056,7 @@ const updateProduct = async (payload) => {
     product_info: JSON.stringify(currProduct)
   }
   const updateTransProduct = await model.updateTransactionProduct(updateTransProductObj, payload);
-  if(updateTransProduct.err) {
+  if (updateTransProduct.err) {
     return updateTransProduct;
   }
 
@@ -1063,7 +1066,7 @@ const updateProduct = async (payload) => {
     payment_return: transactionObj.payment_return
   }
   const updateTrans = await model.updateTransaction(updateTransObj, { id: transactionObj.id });
-  if(updateTrans.err) {
+  if (updateTrans.err) {
     return updateTrans;
   }
 
@@ -1071,7 +1074,7 @@ const updateProduct = async (payload) => {
   ingredientModel.updateStock(listUsedIngredient);
 
   const result = await model.findOne({ id: transactionObj.id })
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -1096,11 +1099,11 @@ const updateProduct = async (payload) => {
 
 const deleteProduct = async (payload) => {
   const checkTransProduct = await model.findTransactionProduct(payload)
-  if(checkTransProduct.err) {
+  if (checkTransProduct.err) {
     return checkTransProduct;
   }
 
-  if(checkTransProduct.data.transaction.status != 'hold') {
+  if (checkTransProduct.data.transaction.status != 'hold') {
     return {
       err: {
         message: 'You can only delete `hold` transaction!',
@@ -1138,7 +1141,7 @@ const deleteProduct = async (payload) => {
   }
 
   const deleteTransProduct = await model.deleteTransactionProduct(payload);
-  if(deleteTransProduct.err) {
+  if (deleteTransProduct.err) {
     return deleteTransProduct;
   }
 
@@ -1148,7 +1151,7 @@ const deleteProduct = async (payload) => {
     payment_return: transactionObj.payment_return
   }
   const updateTrans = await model.updateTransaction(updateTransObj, { id: transactionObj.id });
-  if(updateTrans.err) {
+  if (updateTrans.err) {
     return updateTrans;
   }
 
@@ -1156,7 +1159,7 @@ const deleteProduct = async (payload) => {
   ingredientModel.updateStock(listUsedIngredient);
 
   const result = await model.findOne({ id: transactionObj.id })
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -1181,11 +1184,11 @@ const deleteProduct = async (payload) => {
 
 const payOrder = async (payload) => {
   const checkTrans = await model.findOne(payload)
-  if(checkTrans.err) {
+  if (checkTrans.err) {
     return checkTrans;
   }
 
-  if(checkTrans.data.status == 'paid') {
+  if (checkTrans.data.status == 'paid') {
     return {
       err: {
         message: 'You transactions are already paid!',
@@ -1213,12 +1216,12 @@ const payOrder = async (payload) => {
     status: 'paid'
   }
   const updateTrans = await model.updateTransaction(updateTransObj, { id: transactionObj.id });
-  if(updateTrans.err) {
+  if (updateTrans.err) {
     return updateTrans;
   }
 
   const result = await model.findOne({ id: transactionObj.id })
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -1243,7 +1246,7 @@ const payOrder = async (payload) => {
 
 const reportById = async (payload) => {
   const result = await model.findOne(payload)
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -1275,7 +1278,7 @@ const reportById = async (payload) => {
 
 const report = async (payload) => {
   const result = await model.findAll(payload);
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -1294,7 +1297,7 @@ const report = async (payload) => {
 
 const reportSummary = async (payload) => {
   const result = await model.findAllWithDetail(payload);
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -1310,7 +1313,7 @@ const reportSummary = async (payload) => {
 
       let capitalOneProduct = 0;
       d.product.ingredient.map(i => {
-        capitalOneProduct += i.price * i.tbl_product_ingredient.qty 
+        capitalOneProduct += i.price * i.tbl_product_ingredient.qty
       });
       total_capital += d.qty * capitalOneProduct;
       total_qty += d.qty;
@@ -1333,7 +1336,7 @@ const reportSummary = async (payload) => {
 
 const reportSummaryProduct = async (payload) => {
   const result = await model.findProductTransaction(payload);
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -1349,7 +1352,7 @@ const reportSummaryProduct = async (payload) => {
 
       let capitalOneProduct = 0;
       d.product.ingredient.map(i => {
-        capitalOneProduct += i.price * i.tbl_product_ingredient.qty 
+        capitalOneProduct += i.price * i.tbl_product_ingredient.qty
       });
       total_qty += d.qty;
       total_capital += d.qty * capitalOneProduct;
@@ -1376,12 +1379,12 @@ const reportSummaryProduct = async (payload) => {
 
 const reportExcel = async (payload) => {
   const rsMerchant = await merchantModel.findOne({ id: payload.merchant_id })
-  if(rsMerchant.err) {
+  if (rsMerchant.err) {
     return result;
   }
 
   const result = await model.findAllWithDetail(payload);
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -1432,54 +1435,54 @@ const reportExcel = async (payload) => {
     total_tax += t.total_tax;
     total_qty += subtotal_qty;
     total_capital += subtotal_capital;
-    ws.cell(tIndex+2, 1)
+    ws.cell(tIndex + 2, 1)
       .string(t.code)
-    ws.cell(tIndex+2, 2)
+    ws.cell(tIndex + 2, 2)
       .string(t.note)
-    ws.cell(tIndex+2, 3)
+    ws.cell(tIndex + 2, 3)
       .string(t.status)
-    ws.cell(tIndex+2, 4)
+    ws.cell(tIndex + 2, 4)
       .string(t.type)
-    ws.cell(tIndex+2, 5)
+    ws.cell(tIndex + 2, 5)
       .string(t.payment_type)
-    ws.cell(tIndex+2, 6)
+    ws.cell(tIndex + 2, 6)
       .number(subtotal_qty)
-    ws.cell(tIndex+2, 7)
+    ws.cell(tIndex + 2, 7)
       .string(moment(t.createdAt).format('YYYY-MM-DD'))
-    ws.cell(tIndex+2, 8)
+    ws.cell(tIndex + 2, 8)
       .number(subtotal_capital);
-    ws.cell(tIndex+2, 9)
+    ws.cell(tIndex + 2, 9)
       .number(t.total_tax)
-    ws.cell(tIndex+2, 10)
+    ws.cell(tIndex + 2, 10)
       .number(t.total_price)
-    ws.cell(tIndex+2, 11)
+    ws.cell(tIndex + 2, 11)
       .number(t.total_price - subtotal_capital)
   })
 
-  ws.cell(result.data.rows.length+3, 9)
+  ws.cell(result.data.rows.length + 3, 9)
     .string('Total Qty');
-  ws.cell(result.data.rows.length+3, 11)
+  ws.cell(result.data.rows.length + 3, 11)
     .number(total_qty);
-  ws.cell(result.data.rows.length+4, 9)
+  ws.cell(result.data.rows.length + 4, 9)
     .string('Total Modal');
-  ws.cell(result.data.rows.length+4, 11)
+  ws.cell(result.data.rows.length + 4, 11)
     .number(total_capital);
-  ws.cell(result.data.rows.length+5, 9)
+  ws.cell(result.data.rows.length + 5, 9)
     .string('Total Pajak');
-  ws.cell(result.data.rows.length+5, 11)
+  ws.cell(result.data.rows.length + 5, 11)
     .number(total_tax);
-  ws.cell(result.data.rows.length+6, 9)
+  ws.cell(result.data.rows.length + 6, 9)
     .string('Total Harga Jual');
-  ws.cell(result.data.rows.length+6, 11)
+  ws.cell(result.data.rows.length + 6, 11)
     .number(gross_income);
-  ws.cell(result.data.rows.length+7, 9)
+  ws.cell(result.data.rows.length + 7, 9)
     .string('Total Laba');
-  ws.cell(result.data.rows.length+7, 11)
+  ws.cell(result.data.rows.length + 7, 11)
     .number(gross_income - total_capital);
-  
+
   let excelName = `${moment(new Date()).format('YYYYMMDDHHmmss')}_${moment(payload.start_date).format('YYYY-MM-DD')}_`;
   excelName += `${moment(payload.end_date).format('YYYY-MM-DD')}_${rsMerchant.data.name}.xlsx`;
-  wb.write('./public/files/excel/'+ excelName);
+  wb.write('./public/files/excel/' + excelName);
 
   return {
     err: null,

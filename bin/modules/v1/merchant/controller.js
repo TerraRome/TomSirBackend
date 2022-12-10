@@ -7,7 +7,7 @@ const model = require('./model');
 
 const getMerchant = async (payload) => {
   const result = await model.findOne(payload)
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
@@ -20,12 +20,12 @@ const getMerchant = async (payload) => {
 
 const getMerchants = async (payload) => {
   const result = await model.findAll(payload);
-  if(result.err) {
+  if (result.err) {
     return result;
   }
 
   for (let i = 0; i < result.data.rows.length; i++) {
-    if(result.data.rows[i].dataValues.image) {
+    if (result.data.rows[i].dataValues.image) {
       result.data.rows[i].dataValues.image = config.baseUrl + result.data.rows[i].dataValues.image;
     }
   }
@@ -50,11 +50,11 @@ const create = async (payload) => {
     address: payload.address,
     phone_number: payload.phone_number,
     footer_note: payload.footer_note,
-    server_key: payload.server_key,
-    client_key: payload.client_key
+    // server_key: payload.server_key,
+    // client_key: payload.client_key
   };
 
-  if(payload.image) {
+  if (payload.image) {
     const file = payload.image;
     const newFileName = insertObj.id + '-' + Date.now() + path.extname(file.name);
     const uploadPath = './public/images/merchant/' + newFileName;
@@ -63,8 +63,8 @@ const create = async (payload) => {
   }
 
   const insert = await model.insertOne(insertObj);
-  if(insert.err) {
-    if(payload.image) {
+  if (insert.err) {
+    if (payload.image) {
       fs.unlink(uploadPath, (err) => {
         if (err) console.log('error delete file => ', err);;
       });
@@ -81,7 +81,7 @@ const create = async (payload) => {
 
 const update = async (payload) => {
   const checkData = await model.findOne(payload)
-  if(checkData.err) {
+  if (checkData.err) {
     return checkData;
   }
 
@@ -90,11 +90,11 @@ const update = async (payload) => {
     address: payload.address,
     phone_number: payload.phone_number,
     footer_note: payload.footer_note,
-    server_key: payload.server_key,
-    client_key: payload.client_key
+    // server_key: payload.server_key,
+    // client_key: payload.client_key
   };
 
-  if(payload.image) {
+  if (payload.image) {
     const file = payload.image;
     const newFileName = checkData.data.id + '-' + Date.now() + path.extname(file.name);
     const uploadPath = './public/images/merchant/' + newFileName;
@@ -103,12 +103,12 @@ const update = async (payload) => {
   }
 
   const update = await model.updateOne(updateObj, payload);
-  if(update.err) {
+  if (update.err) {
     return update;
   }
 
-  if(payload.image && checkData.data.image) {
-    fs.unlink('./public/images/merchant/'+checkData.data.image.split('/').pop(), (err) => {
+  if (payload.image && checkData.data.image) {
+    fs.unlink('./public/images/merchant/' + checkData.data.image.split('/').pop(), (err) => {
       if (err) console.log('error delete file => ', err);;
     });
   }
@@ -122,17 +122,17 @@ const update = async (payload) => {
 
 const deleteOne = async (payload) => {
   const checkData = await model.findOne(payload)
-  if(checkData.err) {
+  if (checkData.err) {
     return checkData;
   }
 
   const deleteOne = await model.deleteOne(payload);
-  if(deleteOne.err) {
+  if (deleteOne.err) {
     return deleteOne;
   }
 
-  if(checkData.data.image) {
-    fs.unlink('./public/images/merchant/'+checkData.data.image.split('/').pop(), (err) => {
+  if (checkData.data.image) {
+    fs.unlink('./public/images/merchant/' + checkData.data.image.split('/').pop(), (err) => {
       if (err) console.log('error delete file => ', err);;
     });
   }
