@@ -5,30 +5,30 @@ const Op = sequelize.Op;
 
 const findOne = async (payload) => {
   const ctx = 'findOne';
-    try {
-      const result = await Customer.findOne({
-        where: {
-          id: payload.id
-        }
-      });
-      if(validate.isEmpty(result)) {
-        console.log(ctx, result, 'isEmpty');
-        return {
-          err: { message: 'Customer not found!', code: 404 },
-          data: null
-        }
+  try {
+    const result = await Customer.findOne({
+      where: {
+        id: payload.id
       }
+    });
+    if (validate.isEmpty(result)) {
+      console.log(ctx, result, 'isEmpty');
       return {
-        err: null,
-        data: result
-      }
-    } catch (error) {
-      console.log(ctx, error, 'Catch Error');
-      return {
-        err: { message: 'Internal Server Error!', code: 500 },
+        err: { message: 'Customer not found!', code: 404 },
         data: null
       }
     }
+    return {
+      err: null,
+      data: result
+    }
+  } catch (error) {
+    console.log(ctx, error, 'Catch Error');
+    return {
+      err: { message: 'Internal Server Error!', code: 500 },
+      data: null
+    }
+  }
 }
 
 const findIdAndPhone = async (payload) => {
@@ -135,8 +135,9 @@ const findAll = async (payload) => {
       order: order,
       raw: true,
     };
-    if(payload.search) {
+    if (payload.search) {
       query.where = {
+        ...query.where,
         [Op.or]: [{
           name: {
             [Op.like]: `%${payload.search}%`
@@ -181,23 +182,23 @@ const insertOne = async (payload) => {
 
 const deleteOne = async (payload) => {
   const ctx = 'deleteOne';
-    try {
-      await Customer.destroy({
-        where: {
-          id: payload.id
-        }
-      });
-      return {
-        err: null,
-        data: ''
+  try {
+    await Customer.destroy({
+      where: {
+        id: payload.id
       }
-    } catch (error) {
-      console.log(ctx, error, 'Catch Error');
-      return {
-        err: { message: 'Internal Server Error!', code: 500 },
-        data: null
-      }
+    });
+    return {
+      err: null,
+      data: ''
     }
+  } catch (error) {
+    console.log(ctx, error, 'Catch Error');
+    return {
+      err: { message: 'Internal Server Error!', code: 500 },
+      data: null
+    }
+  }
 }
 
 module.exports = {
