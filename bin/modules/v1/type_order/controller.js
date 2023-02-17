@@ -47,6 +47,7 @@ const create = async (payload) => {
   const insertObj = {
     id: uuidv4(),
     name: payload.name,
+    price: payload.price,
     status: payload.status,
     merchant_id: payload.merchant_id,
   };
@@ -74,6 +75,7 @@ const update = async (payload) => {
   const userObj = {
     name: payload.name,
     status: payload.status,
+    price: payload.price,
     merchant_id: payload.merchant_id,
   };
 
@@ -90,12 +92,12 @@ const update = async (payload) => {
 
 const deleteOne = async (payload) => {
   const checkData = await model.findOneId(payload)
-  if(checkData.err) {
+  if (checkData.err) {
     return checkData;
   }
 
   const deleteOne = await model.deleteOne(payload);
-  if(deleteOne.err) {
+  if (deleteOne.err) {
     return deleteOne;
   }
 

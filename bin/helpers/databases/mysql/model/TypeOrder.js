@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const Model = Sequelize.Model;
 const sequelize = require("../connection");
 
-class TypeOrder extends Model {}
+class TypeOrder extends Model { }
 TypeOrder.init(
   {
     id: {
@@ -16,11 +16,11 @@ TypeOrder.init(
     },
     status: {
       type: Sequelize.BOOLEAN,
-      allowNull: true,
+      allowNull: false,
     },
-    note: {
-      type: Sequelize.STRING(255),
-      allowNull: true,
+    price: {
+      type: Sequelize.INTEGER(11),
+      allowNull: false,
     },
     merchant_id: {
       type: Sequelize.STRING(255),
