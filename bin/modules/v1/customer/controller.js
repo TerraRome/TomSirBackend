@@ -35,7 +35,7 @@ const create = async (payload) => {
     const userObj = {
       id: uuidv4(),
       name: payload.name,
-      email: payload.email,
+      // email: payload.email,
       phone_number: payload.phone_number,
       merchant_id: payload.merchant_id,
     };
@@ -48,7 +48,7 @@ const create = async (payload) => {
   }
 
   return {
-    err: { message: "phone number is already taken!", code: 409 },
+    err: null,
     data: null,
   };
 };
@@ -82,12 +82,12 @@ const update = async (payload) => {
 
 const deleteOne = async (payload) => {
   const checkData = await model.findOne(payload)
-  if(checkData.err) {
+  if (checkData.err) {
     return checkData;
   }
 
   const deleteOne = await model.deleteOne(payload);
-  if(deleteOne.err) {
+  if (deleteOne.err) {
     return deleteOne;
   }
 

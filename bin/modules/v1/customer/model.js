@@ -72,6 +72,8 @@ const findByPhone = async (payload) => {
     const result = await Customer.findOne({
       where: {
         phone_number: payload.phone_number,
+        name: payload.name,
+        merchant_id: payload.merchant_id,
       },
       raw: true,
       nest: true,

@@ -8,8 +8,8 @@ const getCustomers = joi.object({
   search: joi.string().optional().allow('').default(''),
   limit: joi.number().optional().default(999999999),
   page: joi.number().optional().default(1),
-  sortBy: joi.string().valid('name','createdAt').optional().default('createdAt'),
-  order: joi.string().valid('ASC','DESC').optional().default('ASC'),
+  sortBy: joi.string().valid('name', 'createdAt').optional().default('createdAt'),
+  order: joi.string().valid('ASC', 'DESC').optional().default('ASC'),
   merchant_id: joi.string().required()
 });
 

@@ -90,7 +90,7 @@ const create = async (payload) => {
 
   const transactionObj = {
     id: uuidv4(),
-    code: payload.type_order == 'dine_in' ? 'DI-' : 'TA-',
+    code: payload.type_order,
     type: payload.type_order,
     note: payload.note_order,
     whatsapp: payload.whatsapp,
@@ -221,7 +221,7 @@ const create = async (payload) => {
     nol_code_number += "0";
   }
 
-  transactionObj.code = transactionObj.code + nol_code_number + code_number;
+  transactionObj.code = transactionObj.code + "-" + nol_code_number + code_number;
   transactionObj.total_tax = transactionObj.total_price * transactionObj.tax_percentage / 100;
   transactionObj.total_price += transactionObj.total_tax;
   transactionObj.payment_return = transactionObj.total_pay - transactionObj.total_price;
