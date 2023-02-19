@@ -305,7 +305,7 @@ const updateStock = async (payload) => {
 }
 
 const refundStock = async (payload) => {
-  const ctx = 'updateStock';
+  const ctx = 'refundStock';
   try {
     let ids = [];
     let caseSql = '';
