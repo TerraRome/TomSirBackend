@@ -9,6 +9,7 @@ const findOne = async (payload) => {
   try {
     const result = await TypeOrder.findOne({
       where: {
+        merchant_id: payload.merchant_id,
         name: payload.name
       },
       raw: true

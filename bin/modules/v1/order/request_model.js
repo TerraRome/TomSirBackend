@@ -22,7 +22,7 @@ const getOrders = joi.object({
 const create = joi.object({
   type_order: joi.string().required(),
   note_order: joi.string().required().allow('').default(''),
-  whatsapp: joi.string().required().allow('').default(''),
+  whatsapp: joi.string().optional().allow('').default(''),
   products: joi.array().items(joi.object({
     qty: joi.number().required(),
     price: joi.number().required(),
@@ -46,7 +46,7 @@ const update = joi.object({
   id: joi.string().required(),
   type_order: joi.string().required(),
   note_order: joi.string().required().allow('').default(''),
-  whatsapp: joi.string().required().allow('').default(''),
+  whatsapp: joi.string().optional().allow('').default(''),
   products: joi.array().items(joi.object({
     qty: joi.number().required(),
     price: joi.number().required(),

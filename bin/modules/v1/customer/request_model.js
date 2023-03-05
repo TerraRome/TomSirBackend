@@ -16,7 +16,7 @@ const getCustomers = joi.object({
 const create = joi.object({
   name: joi.string().required(),
   email: joi.string().optional(),
-  phone_number: joi.string().required(),
+  phone_number: joi.string().optional(),
   merchant_id: joi.string().required().messages({
     'any.required': `Akun anda tidak memiliki merchant`
   }),
@@ -26,7 +26,7 @@ const update = joi.object({
   id: joi.string().required(),
   name: joi.string().required(),
   email: joi.string().optional(),
-  phone_number: joi.string().required(),
+  phone_number: joi.string().optional(),
   merchant_id: joi.string().required(),
 });
 
