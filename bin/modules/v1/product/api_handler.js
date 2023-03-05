@@ -96,7 +96,7 @@ router.get('/:id', async (req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
-router.post('/', jwtAuth.verifyToken, jwtAuth.isAdmin, async (req, res) => {
+router.post('/', jwtAuth.verifyToken, async (req, res) => {
   const payload = {
     ...req.body,
     merchant_id: req.decodedToken.merchant ? req.decodedToken.merchant.id || undefined : undefined,
@@ -135,7 +135,7 @@ router.post('/', jwtAuth.verifyToken, jwtAuth.isAdmin, async (req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
-router.put('/:id', jwtAuth.verifyToken, jwtAuth.isAdmin, async (req, res) => {
+router.put('/:id', jwtAuth.verifyToken, async (req, res) => {
   const payload = {
     id: req.params.id,
     ...req.body,
@@ -173,7 +173,7 @@ router.put('/:id', jwtAuth.verifyToken, jwtAuth.isAdmin, async (req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
-router.delete('/:id', jwtAuth.verifyToken, jwtAuth.isAdmin, async (req, res) => {
+router.delete('/:id', jwtAuth.verifyToken, async (req, res) => {
   const payload = {
     id: req.params.id
   };

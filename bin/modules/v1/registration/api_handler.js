@@ -64,7 +64,7 @@ router.get('/all', async (req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
-router.post('/', jwtAuth.verifyToken, jwtAuth.isAdmin, async (req, res) => {
+router.post('/', jwtAuth.verifyToken, async (req, res) => {
   const payload = {
     ...req.body,
     merchant_id: req.decodedToken.merchant ? req.decodedToken.merchant.id || undefined : undefined,
