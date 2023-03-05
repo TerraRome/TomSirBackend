@@ -34,7 +34,7 @@ router.get('/', jwtAuth.verifyToken, jwtAuth.isSuperAdmin, async (req, res) => {
   sendResponse(await postRequest(validatePayload));
 });
 
-router.get('/:id', jwtAuth.verifyToken, jwtAuth.isAdmin, async (req, res) => {
+router.get('/:id', jwtAuth.verifyToken, async (req, res) => {
   const payload = {
     id: req.params.id,
   };
